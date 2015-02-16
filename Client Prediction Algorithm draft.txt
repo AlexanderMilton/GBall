@@ -1,0 +1,29 @@
+
+Client prediction
+
+EACH FRAME:
+
+	CLIENT
+		Get time / Start timer
+		Get player input from keys
+		Send input data to server
+		
+	SERVER
+		Get time / Start timer 
+		Get player input from message buffer
+		Simulate the players using the player movement data
+		Simulate server side items (the ball)
+		Pack all objects and the world state
+		Distribute packet to all clients
+		
+	CLIENT
+		Read incoming server packets from message buffer
+		Generate world and object state using server data
+		Get timer / timer
+		Delta time (between timer start and finish) is the simulation time for next frame
+		
+	SERVER
+		Get timer / timer
+		Delta time (between timer start and finish) is the simulation time for next frame
+
+REITERATE.
