@@ -7,9 +7,12 @@ import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import GBall.Shared.Const;
 import GBall.Shared.EntityManager;
+import GBall.Shared.GameEntity;
 import GBall.Shared.GameWindow;
 import GBall.Shared.KeyConfig;
 import GBall.Shared.MsgData;
@@ -33,6 +36,7 @@ public class World
 
 	private double m_lastTime = System.currentTimeMillis();
 	private double m_actualFps = 0.0;
+	private DatagramSocket m_socket;
 
 	private final GameWindow m_gameWindow = new GameWindow();
 
@@ -49,7 +53,7 @@ public class World
 		try
 		{
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			DatagramSocket m_socket = new DatagramSocket();
+			m_socket = new DatagramSocket();
 			InetAddress m_serverAddress = InetAddress.getByName("localhost");
 			ObjectOutputStream oos = new ObjectOutputStream(baos);
 			oos.writeObject(new MsgData());
@@ -72,11 +76,45 @@ public class World
 		{
 			if (newFrame())
 			{
+//				System.out.println(System.currentTimeMillis());
+				LinkedList<GameEntity> entities = EntityManager.getState();
+				GameEntity ge;
+				for(Iterator<GameEntity> itr = entities.iterator(); itr.hasNext();)
+				{
+					ge = itr.next();
+					sendMsg(ge.getMsgData());
+				}
 				EntityManager.getInstance().updatePositions();
 				EntityManager.getInstance().checkBorderCollisions(Const.DISPLAY_WIDTH, Const.DISPLAY_HEIGHT);
 				EntityManager.getInstance().checkShipCollisions();
 				m_gameWindow.repaint();
 			}
+		}
+	}
+
+	private void sendMsg(MsgData msg)
+	{
+		try
+		{
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			InetAddress m_serverAddress;
+
+			m_serverAddress = InetAddress.getByName("localhost");
+
+			ObjectOutputStream oos = new ObjectOutputStream(baos);
+			oos.writeObject(msg);
+			oos.flush();
+
+			byte[] buf = new byte[1024];
+
+			buf = baos.toByteArray();
+
+			DatagramPacket pack = new DatagramPacket(buf, buf.length, m_serverAddress, SERVERPORT);
+			m_socket.send(pack);
+		} catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 

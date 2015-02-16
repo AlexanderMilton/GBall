@@ -137,4 +137,8 @@ public abstract class GameEntity implements Serializable
 		m_position.add(displacement);
 	}
 
+	public MsgData getMsgData()
+	{
+		return new MsgData(m_position, m_initialPosition, m_initialDirection, m_speed, m_direction);
+	}
 }
