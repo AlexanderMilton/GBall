@@ -137,4 +137,10 @@ public class Vector2D implements Serializable
 	{
 		return new Vector2D(m_x * factor, m_y * factor);
 	}
+	
+	@Override
+	public String toString()
+	{
+		return "(" + m_x + "," + m_y + ")";
+	}
 }

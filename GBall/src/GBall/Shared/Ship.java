@@ -8,6 +8,10 @@ import GBall.Client.World;
 public class Ship extends GameEntity implements KeyListener
 {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Color m_color;
 	private final KeyConfig m_keyConfig;
 	private int rotation = 0; // Set to 1 when rotating clockwise, -1 when

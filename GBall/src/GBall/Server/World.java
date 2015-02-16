@@ -1,17 +1,13 @@
 package GBall.Server;
 
 import java.awt.event.*;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 
 import GBall.Shared.Const;
 import GBall.Shared.EntityManager;
-import GBall.Shared.GameWindow;
 import GBall.Shared.KeyConfig;
+import GBall.Shared.Listener;
 import GBall.Shared.MsgData;
 import GBall.Shared.Vector2D;
 
@@ -33,8 +29,11 @@ public class World
 
 	private double m_lastTime = System.currentTimeMillis();
 	private double m_actualFps = 0.0;
+	
+	private DatagramSocket m_socket;
+	private Listener m_listener;
 
-	private final GameWindow m_gameWindow = new GameWindow();
+//	private  GameWindow m_gameWindow; //= new GameWindow();
 
 	private World()
 	{
@@ -48,19 +47,30 @@ public class World
 		// Marshal the state
 		try
 		{
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			DatagramSocket m_socket = new DatagramSocket();
-			InetAddress m_serverAddress = InetAddress.getByName("localhost");
-			ObjectOutputStream oos = new ObjectOutputStream(baos);
-			oos.writeObject(new MsgData());
-			oos.flush();
-
-			byte[] buf = new byte[1024];
-
-			buf = baos.toByteArray();
-
-			DatagramPacket pack = new DatagramPacket(buf, buf.length, m_serverAddress, SERVERPORT);
-			m_socket.send(pack);
+//			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			m_socket = new DatagramSocket(SERVERPORT);
+			m_listener = new Listener(m_socket);
+			m_listener.start();
+			
+			MsgData msg;
+			while(true)
+			{
+				if((msg = m_listener.getMessage()) != null)
+				{
+					System.out.println(msg);
+				}
+			}
+			
+//			ObjectOutputStream oos = new ObjectOutputStream(baos);
+//			oos.writeObject(new MsgData());
+//			oos.flush();
+//
+//			byte[] buf = new byte[1024];
+//
+//			buf = baos.toByteArray();
+//
+//			DatagramPacket pack = new DatagramPacket(buf, buf.length, m_serverAddress, SERVERPORT);
+//			m_socket.send(pack);
 
 		} catch (IOException e)
 		{
@@ -75,7 +85,7 @@ public class World
 				EntityManager.getInstance().updatePositions();
 				EntityManager.getInstance().checkBorderCollisions(Const.DISPLAY_WIDTH, Const.DISPLAY_HEIGHT);
 				EntityManager.getInstance().checkShipCollisions();
-				m_gameWindow.repaint();
+//				m_gameWindow.repaint();
 			}
 		}
 	}
@@ -125,7 +135,7 @@ public class World
 
 	public void addKeyListener(KeyListener k)
 	{
-		m_gameWindow.addKeyListener(k);
+//		m_gameWindow.addKeyListener(k);
 	}
 
 }
