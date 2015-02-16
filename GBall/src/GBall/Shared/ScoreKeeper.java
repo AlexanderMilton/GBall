@@ -1,4 +1,4 @@
-package GBall;
+package GBall.Shared;
 
 import java.awt.Graphics;
 

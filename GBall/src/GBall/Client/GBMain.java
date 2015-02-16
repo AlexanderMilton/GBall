@@ -1,4 +1,5 @@
-package GBall;
+package GBall.Client;
+
 
 public class GBMain
 {

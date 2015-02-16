@@ -1,7 +1,9 @@
-package GBall;
+package GBall.Shared;
 
 import java.awt.Color;
 import java.awt.event.*;
+
+import GBall.Client.World;
 
 public class Ship extends GameEntity implements KeyListener
 {
