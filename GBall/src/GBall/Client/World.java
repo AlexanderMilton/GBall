@@ -40,7 +40,7 @@ public class World
 	private DatagramSocket m_socket;
 	private Listener m_listener;
 
-	private final GameWindow m_gameWindow = new GameWindow();
+	private final GameWindow m_gameWindow = new GameWindow("Client");
 	private InputListener m_inputListener;
 	
 	private Ship ship;
@@ -94,11 +94,11 @@ public class World
 				/*ship.setRotation(m_inputListener.getRotation());
 				ship.setAcceleration(m_inputListener.getAcceleration());*/
 				MsgData msg = new MsgData();
-				msg.m_rotation = m_inputListener.getRotation();
-				msg.m_acceleration = m_inputListener.getAcceleration();
-				msg.m_prevMsg = prevMsg;
+				msg.setParameter("rotation", m_inputListener.getRotation());
+				msg.setParameter("acceleration", m_inputListener.getAcceleration());
+				//msg.m_prevMsg = prevMsg;
 				sendMsg(msg);
-				msg.m_prevMsg = null;
+				//msg.m_prevMsg = null;
 				prevMsg = msg;
 				EntityManager.getInstance().updatePositions();
 				EntityManager.getInstance().checkBorderCollisions(Const.DISPLAY_WIDTH, Const.DISPLAY_HEIGHT);

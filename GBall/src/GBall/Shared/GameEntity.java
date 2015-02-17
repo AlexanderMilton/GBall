@@ -144,6 +144,7 @@ public abstract class GameEntity implements Serializable
 
 	public MsgData getMsgData()
 	{
-		return new MsgData(m_position, m_initialPosition, m_initialDirection, m_speed, m_direction);
+		//return new MsgData(m_position, m_initialPosition, m_initialDirection, m_speed, m_direction);
+		return null;
 	}
 }

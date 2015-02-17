@@ -13,6 +13,11 @@ public class ClientConnection
 		m_port = port;
 	}
 	
+	public void sendMessage()
+	{
+		
+	}
+	
 	public boolean testAddress(InetAddress test)
 	{
 		return m_address.equals(test);

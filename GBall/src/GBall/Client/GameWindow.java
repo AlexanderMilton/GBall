@@ -21,12 +21,13 @@ public class GameWindow extends Frame implements WindowListener
 	// private final static int YOFFSET = 34;
 	// private final static int XOFFSET = 4;
 
-	public GameWindow()
+	public GameWindow(String title)
 	{
 		addWindowListener(this);
 
 		setSize(Const.DISPLAY_WIDTH, Const.DISPLAY_HEIGHT);
-		setTitle(Const.APP_NAME);
+//		setTitle(Const.APP_NAME);
+		setTitle(title);
 		setVisible(true);
 	}
 

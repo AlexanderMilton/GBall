@@ -33,7 +33,7 @@ public class World
 	private DatagramSocket m_socket;
 	private Listener m_listener;
 
-	private  GameWindow m_gameWindow = new GameWindow();
+	private  GameWindow m_gameWindow = new GameWindow("Server");
 
 	private World()
 	{
@@ -76,8 +76,14 @@ public class World
 			if((msg = m_listener.getMessage()) != null)
 			{
 				System.out.println(msg);
-				EntityManager.getInstance().setAcceleration(msg.m_acceleration);
-				EntityManager.getInstance().setRotation(msg.m_rotation);
+				try
+				{
+					EntityManager.getInstance().setAcceleration(msg.getDouble("acceleration"));
+					EntityManager.getInstance().setRotation(msg.getInt("rotation"));
+				} catch(NullPointerException e)
+				{
+					//Do nothing;
+				}
 			}
 			if (newFrame())
 			{
