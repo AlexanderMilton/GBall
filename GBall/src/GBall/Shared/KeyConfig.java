@@ -4,14 +4,12 @@ public class KeyConfig
 {
 	private final int m_leftKey;
 	private final int m_rightKey;
-	private final int m_brakeKey;
 	private final int m_accelerateKey;
 
-	public KeyConfig(int left, int right, int brake, int accelerate)
+	public KeyConfig(int left, int right, int accelerate)
 	{
 		m_leftKey = left;
 		m_rightKey = right;
-		m_brakeKey = brake;
 		m_accelerateKey = accelerate;
 	}
 
@@ -23,11 +21,6 @@ public class KeyConfig
 	public int rightKey()
 	{
 		return m_rightKey;
-	}
-
-	public int brakeKey()
-	{
-		return m_brakeKey;
 	}
 
 	public int accelerateKey()

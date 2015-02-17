@@ -4,9 +4,9 @@ import java.awt.event.*;
 import java.io.IOException;
 import java.net.DatagramSocket;
 
+import GBall.Client.GameWindow;
 import GBall.Shared.Const;
 import GBall.Shared.EntityManager;
-import GBall.Shared.KeyConfig;
 import GBall.Shared.Listener;
 import GBall.Shared.MsgData;
 import GBall.Shared.Vector2D;
@@ -33,7 +33,7 @@ public class World
 	private DatagramSocket m_socket;
 	private Listener m_listener;
 
-//	private  GameWindow m_gameWindow; //= new GameWindow();
+	private  GameWindow m_gameWindow = new GameWindow();
 
 	private World()
 	{
@@ -43,7 +43,7 @@ public class World
 	public void process()
 	{
 		initPlayers();
-
+		
 		// Marshal the state
 		try
 		{
@@ -52,14 +52,7 @@ public class World
 			m_listener = new Listener(m_socket);
 			m_listener.start();
 			
-			MsgData msg;
-			while(true)
-			{
-				if((msg = m_listener.getMessage()) != null)
-				{
-					System.out.println(msg);
-				}
-			}
+			
 			
 //			ObjectOutputStream oos = new ObjectOutputStream(baos);
 //			oos.writeObject(new MsgData());
@@ -77,15 +70,21 @@ public class World
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		MsgData msg;
 		while (true)
 		{
+			if((msg = m_listener.getMessage()) != null)
+			{
+				System.out.println(msg);
+				EntityManager.getInstance().setAcceleration(msg.m_acceleration);
+				EntityManager.getInstance().setRotation(msg.m_rotation);
+			}
 			if (newFrame())
 			{
 				EntityManager.getInstance().updatePositions();
 				EntityManager.getInstance().checkBorderCollisions(Const.DISPLAY_WIDTH, Const.DISPLAY_HEIGHT);
 				EntityManager.getInstance().checkShipCollisions();
-//				m_gameWindow.repaint();
+				m_gameWindow.repaint();
 			}
 		}
 	}
@@ -110,18 +109,14 @@ public class World
 	private void initPlayers()
 	{
 		// Team 1
-		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP1_X, Const.START_TEAM1_SHIP1_Y), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), Const.TEAM1_COLOR,
-				new KeyConfig(KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_S, KeyEvent.VK_W));
+		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP1_X, Const.START_TEAM1_SHIP1_Y), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), Const.TEAM1_COLOR);
 
-		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP2_X, Const.START_TEAM1_SHIP2_Y), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), Const.TEAM1_COLOR,
-				new KeyConfig(KeyEvent.VK_F, KeyEvent.VK_H, KeyEvent.VK_G, KeyEvent.VK_T));
+		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP2_X, Const.START_TEAM1_SHIP2_Y), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), Const.TEAM1_COLOR);
 
 		// Team 2
-		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP1_X, Const.START_TEAM2_SHIP1_Y), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), Const.TEAM2_COLOR,
-				new KeyConfig(KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_UP));
+		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP1_X, Const.START_TEAM2_SHIP1_Y), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), Const.TEAM2_COLOR);
 
-		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP2_X, Const.START_TEAM2_SHIP2_Y), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), Const.TEAM2_COLOR,
-				new KeyConfig(KeyEvent.VK_J, KeyEvent.VK_L, KeyEvent.VK_K, KeyEvent.VK_I));
+		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP2_X, Const.START_TEAM2_SHIP2_Y), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), Const.TEAM2_COLOR);
 
 		// Ball
 		EntityManager.getInstance().addBall(new Vector2D(Const.BALL_X, Const.BALL_Y), new Vector2D(0.0, 0.0));

@@ -16,7 +16,12 @@ public class MsgData implements Serializable, Comparable<MsgData>
 	public Vector2D m_speed;
 	public Vector2D m_direction; // Should always be unit vector; determines the
 									// object's facing
+	
+	public int m_rotation;
+	public double m_acceleration;
 	public long m_timestamp;
+	
+	public MsgData m_prevMsg = null;
 
 	public MsgData()
 	{
@@ -70,7 +75,17 @@ public class MsgData implements Serializable, Comparable<MsgData>
 						+ m_initialDirection + ", "
 						+ m_speed + ", "
 						+ m_direction + ", "
-						+ m_timestamp;
+						+ m_rotation + ", "
+						+ m_acceleration + ", "
+						+ m_timestamp + " : ";
+		if(m_prevMsg != null)
+		{
+			string += m_prevMsg;
+		}
+		else
+		{
+			string += "null";
+		}
 		return string;
 	}
 }

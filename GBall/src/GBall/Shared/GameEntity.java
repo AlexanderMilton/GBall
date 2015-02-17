@@ -41,6 +41,11 @@ public abstract class GameEntity implements Serializable
 		m_initialPosition = new Vector2D(position.getX(), position.getY());
 		m_initialDirection = new Vector2D(direction.getX(), direction.getY());
 	}
+	
+	public void setRotation(int rotation)
+	{
+		// do nothing
+	}
 
 	public void setAcceleration(double a)
 	{

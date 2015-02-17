@@ -1,11 +1,9 @@
 package GBall.Shared;
 
 import java.awt.Color;
-import java.awt.event.*;
 
-import GBall.Client.World;
 
-public class Ship extends GameEntity implements KeyListener
+public class Ship extends GameEntity// implements KeyListener
 {
 
 	/**
@@ -13,20 +11,18 @@ public class Ship extends GameEntity implements KeyListener
 	 */
 	private static final long serialVersionUID = 1L;
 	private Color m_color;
-	private final KeyConfig m_keyConfig;
 	private int rotation = 0; // Set to 1 when rotating clockwise, -1 when
 								// rotating counterclockwise
 	private boolean braking = false;
 
-	public Ship(final Vector2D position, final Vector2D speed, final Vector2D direction, final Color col, final KeyConfig kc)
+	public Ship(final Vector2D position, final Vector2D speed, final Vector2D direction, final Color col)
 	{
 		super(position, speed, direction, Const.SHIP_MAX_ACCELERATION, Const.SHIP_MAX_SPEED, Const.SHIP_FRICTION);
 		m_color = col;
-		m_keyConfig = kc;
-		World.getInstance().addKeyListener(this);
+	//	World.getInstance().addKeyListener(this);
 	}
 
-	@Override
+	/*@Override
 	public void keyPressed(KeyEvent e)
 	{
 		try
@@ -79,6 +75,12 @@ public class Ship extends GameEntity implements KeyListener
 	@Override
 	public void keyTyped(KeyEvent e)
 	{
+	}*/
+	
+	@Override
+	public void setRotation(int r)
+	{
+		rotation = r;
 	}
 
 	@Override

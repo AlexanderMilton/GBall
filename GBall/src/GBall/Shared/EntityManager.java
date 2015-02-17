@@ -2,6 +2,7 @@ package GBall.Shared;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -23,9 +24,9 @@ public class EntityManager
 	{
 	}
 
-	public void addShip(final Vector2D position, final Vector2D speed, final Vector2D direction, final Color color, final KeyConfig kc)
+	public void addShip(final Vector2D position, final Vector2D speed, final Vector2D direction, final Color color)
 	{
-		m_entities.add(new Ship(position, speed, direction, color, kc));
+		m_entities.add(new Ship(position, speed, direction, color));
 	}
 
 	public void addBall(final Vector2D position, final Vector2D speed)
@@ -156,5 +157,27 @@ public class EntityManager
 	{
 
 		return m_entities;
+	}
+	
+	public void setAcceleration(double acceleration)
+	{
+		GameEntity ge;
+		for(Iterator<GameEntity> itr = m_entities.iterator(); itr.hasNext();)
+		{
+			ge = itr.next();
+			
+			ge.setAcceleration(acceleration);
+		}
+	}
+	
+	public void setRotation(int rotation)
+	{
+		GameEntity ge;
+		for(Iterator<GameEntity> itr = m_entities.iterator(); itr.hasNext();)
+		{
+			ge = itr.next();
+			
+			ge.setRotation(rotation);
+		}
 	}
 }

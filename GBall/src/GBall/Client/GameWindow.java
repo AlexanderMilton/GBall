@@ -1,9 +1,11 @@
-package GBall.Shared;
+package GBall.Client;
 
 import java.awt.*;
 import java.awt.event.*;
 
-import GBall.Client.World;
+import GBall.Shared.Const;
+import GBall.Shared.EntityManager;
+import GBall.Shared.ScoreKeeper;
 
 public class GameWindow extends Frame implements WindowListener
 {
