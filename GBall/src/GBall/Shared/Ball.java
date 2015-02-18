@@ -13,7 +13,7 @@ public class Ball extends GameEntity
 
 	public Ball(final Vector2D position, final Vector2D speed)
 	{
-		super(position, speed, new Vector2D(0, 0), Const.BALL_MAX_ACCELERATION, Const.BALL_MAX_SPEED, Const.BALL_FRICTION);
+		super(position, speed, new Vector2D(0, 0), Const.BALL_MAX_ACCELERATION, Const.BALL_MAX_SPEED, Const.BALL_FRICTION, 0);
 		m_color = Const.BALL_COLOR;
 	}
 

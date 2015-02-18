@@ -5,12 +5,15 @@ import java.io.IOException;
 import java.net.DatagramSocket;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 import GBall.Client.GameWindow;
 import GBall.Shared.Const;
 import GBall.Shared.EntityManager;
+import GBall.Shared.GameEntity;
 import GBall.Shared.Listener;
 import GBall.Shared.MsgData;
+import GBall.Shared.ScoreKeeper;
 import GBall.Shared.Vector2D;
 
 public class World
@@ -81,7 +84,7 @@ public class World
 			{
 				int shipID = msg.getInt("ID");
 				
-				System.out.println(msg.debugInfo());
+				//System.out.println(msg.debugInfo());
 				ClientConnection c = findClient(msg);
 				if (c != null)
 				{
@@ -104,6 +107,8 @@ public class World
 				EntityManager.getInstance().checkBorderCollisions(Const.DISPLAY_WIDTH, Const.DISPLAY_HEIGHT);
 				EntityManager.getInstance().checkShipCollisions();
 				m_gameWindow.repaint();
+				MsgData stateMsg = packState(EntityManager.getState()); 
+				broadcast(stateMsg);
 			}
 		}
 	}
@@ -148,6 +153,48 @@ public class World
 			m_actualFps = 1000 / delta;
 		}
 		return rv;
+	}
+	
+	private MsgData packState(LinkedList<GameEntity> list)
+	{
+		// fetch data about each gameentity (ships and ball)
+		ArrayList<MsgData> msgs = new ArrayList<MsgData>();
+		GameEntity ge;
+		for(Iterator<GameEntity> itr = list.iterator(); itr.hasNext(); )
+		{
+			ge = itr.next();
+			
+			msgs.add(ge.getMsgData());
+		}
+		
+		// pack all data into combined message
+		MsgData msg = new MsgData();
+		msg.setParameter("EntityCount", msgs.size());
+		msg.setParameter("Score", ScoreKeeper.getInstance().getScore());
+		
+		
+		for(int i = 0; i < msgs.size(); i++)
+		{
+			msg.setParameter("entity"+i, msgs.get(i).getJSONObj());
+		}
+//		System.out.println(msg.toString());
+		return msg;
+	}
+	
+	private void broadcast(MsgData msg)
+	{
+		if(msg == null)
+		{
+			return;
+		}
+		
+		ClientConnection c;
+		for(Iterator<ClientConnection> itr = m_clients.iterator(); itr.hasNext();)
+		{
+			c = itr.next();
+			
+			c.sendMessage(msg.toString());
+		}
 	}
 
 	private void initPlayers()

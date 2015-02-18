@@ -28,6 +28,22 @@ public class ScoreKeeper
 		m_team1Score = 0;
 		m_team2Score = 0;
 	}
+	
+	public void setScore(Vector2D v)
+	{
+		if(v.getX() < 0 || v.getY() < 0)
+		{
+			return;
+		}
+		
+		m_team1Score = (int)v.getX();
+		m_team2Score = (int)v.getY();
+	}
+	
+	public Vector2D getScore()
+	{
+		return new Vector2D(m_team1Score, m_team2Score);
+	}
 
 	public void render(Graphics g)
 	{

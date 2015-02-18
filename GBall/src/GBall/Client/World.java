@@ -11,6 +11,7 @@ import GBall.Shared.EntityManager;
 import GBall.Shared.KeyConfig;
 import GBall.Shared.Listener;
 import GBall.Shared.MsgData;
+import GBall.Shared.ScoreKeeper;
 import GBall.Shared.Ship;
 import GBall.Shared.Vector2D;
 
@@ -57,19 +58,19 @@ public class World
 			m_socket = new DatagramSocket();
 			m_listener = new Listener(m_socket);
 			m_listener.start();
-			InetAddress m_serverAddress = InetAddress.getByName("localhost");
+//			InetAddress m_serverAddress = InetAddress.getByName("localhost");
 //			ObjectOutputStream oos = new ObjectOutputStream(baos);
 //			oos.writeObject(new MsgData());
 //			oos.flush();
 //
 //			byte[] buf = new byte[1024];
-//
+//s
 //			buf = baos.toByteArray();
 			
-			MsgData msg = new MsgData();
-			byte[] buf = msg.toString().getBytes();
-			DatagramPacket pack = new DatagramPacket(buf, buf.length, m_serverAddress, SERVERPORT);
-			m_socket.send(pack);
+//			MsgData msg = new MsgData();
+//			byte[] buf = msg.toString().getBytes();
+//			DatagramPacket pack = new DatagramPacket(buf, buf.length, m_serverAddress, SERVERPORT);
+//			m_socket.send(pack);
 
 		} catch (IOException e)
 		{
@@ -77,10 +78,16 @@ public class World
 			e.printStackTrace();
 		}
 //		MsgData prevMsg = null;
+		MsgData msg;
 		while (true)
 		{
 			if (newFrame())
 			{
+				if((msg = m_listener.getMessage()) != null)
+				{
+					System.out.println(msg.debugInfo());
+					updateState(msg);
+				}
 //				System.out.println(System.currentTimeMillis());
 				/*LinkedList<GameEntity> entities = EntityManager.getState();
 				GameEntity ge;
@@ -91,11 +98,12 @@ public class World
 				}*/
 				/*ship.setRotation(m_inputListener.getRotation());
 				ship.setAcceleration(m_inputListener.getAcceleration());*/
-				MsgData msg = new MsgData();
-				msg.setParameter("ID", ship.getID());
+				msg = new MsgData();
+				msg.setParameter("ID", 1);// ship.getID());
 				msg.setParameter("rotation", m_inputListener.getRotation());
 				msg.setParameter("acceleration", m_inputListener.getAcceleration());
 				//msg.m_prevMsg = prevMsg;
+//				System.out.println(EntityManager.getState().get(1).getPosition().toJSONString());
 				sendMsg(msg);
 				//msg.m_prevMsg = null;
 //				prevMsg = msg;
@@ -105,6 +113,18 @@ public class World
 				m_gameWindow.repaint();
 			}
 		}
+	}
+	
+	private void updateState(MsgData msg)
+	{
+		int count = msg.getInt("EntityCount");
+		System.out.println(count);
+		for(int i = 0; i < count; i++)
+		{
+			System.out.println("World: Update Entity " + i + " out of " + count);
+			EntityManager.getInstance().setState(i, new MsgData(msg.getJSONObj("Entity"+i)));
+		}
+		ScoreKeeper.getInstance().setScore(msg.getVector("Score"));
 	}
 
 	private void sendMsg(MsgData msg)

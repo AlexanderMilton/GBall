@@ -159,6 +159,11 @@ public class EntityManager
 		return m_entities;
 	}
 	
+	public void setState(int index, MsgData msg)
+	{
+		m_entities.get(index).setState(msg);
+	}
+	
 	public void setAcceleration(int shipID, double acceleration)
 	{
 		m_entities.get(shipID).setAcceleration(acceleration);

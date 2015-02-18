@@ -44,6 +44,13 @@ public class MsgData implements Comparable<MsgData>
 		stamp();
 	}
 	
+	public MsgData(JSONObject o)
+	{
+		obj = o;
+		m_address = null;
+		m_port = -1;
+	}
+	
 	public MsgData(String JSONString, InetAddress address, int port) throws ParseException
 	{		
 		JSONParser p = new JSONParser();
@@ -74,14 +81,27 @@ public class MsgData implements Comparable<MsgData>
 		obj.put(key, value);
 	}
 	
+	public void setParameter(String key, JSONObject value)
+	{
+		obj.put(key, value.toJSONString());
+	}
+	
 	public JSONObject getJSONObj()
 	{
 		return obj;
 	}
 	
+	public JSONObject getJSONObj(String key)
+	{
+		return (JSONObject) obj.get(key);
+	}
+	
 	public Vector2D getVector(String key)
 	{
-		return (Vector2D) obj.get(key);
+		JSONParser p = new JSONParser();
+		System.out.println(obj.get(key));
+		JSONObject o = (JSONObject) obj.get(key);
+		return (new Vector2D(o)) ;
 	}
 	
 	public int getInt(String key)

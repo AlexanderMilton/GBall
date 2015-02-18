@@ -2,7 +2,10 @@ package GBall.Shared;
 
 import java.io.Serializable;
 
-public class Vector2D implements Serializable
+import org.json.simple.JSONAware;
+import org.json.simple.JSONObject;
+
+public class Vector2D implements Serializable, JSONAware
 {
 	/**
 	 * 
@@ -28,6 +31,12 @@ public class Vector2D implements Serializable
 		m_x = v.getX();
 		m_y = v.getY();
 	}
+	
+	public Vector2D(JSONObject o)
+	{
+		m_x = (double) o.get("x");
+		m_y = (double) o.get("y");
+	}
 
 	public double getX()
 	{
@@ -42,6 +51,12 @@ public class Vector2D implements Serializable
 	public double length()
 	{
 		return Math.sqrt(m_x * m_x + m_y * m_y);
+	}
+	
+	public void set(Vector2D v)
+	{
+		m_x = v.getX();
+		m_y = v.getY();
 	}
 
 	public void set(double px, double py)
@@ -142,5 +157,11 @@ public class Vector2D implements Serializable
 	public String toString()
 	{
 		return "(" + m_x + "," + m_y + ")";
+	}
+
+	@Override
+	public String toJSONString()
+	{
+		return new String("{"+'"'+"x"+'"'+":" + m_x + ","+'"'+"y"+'"'+":"+ m_y + "}");
 	}
 }
