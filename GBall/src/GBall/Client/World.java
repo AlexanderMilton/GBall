@@ -47,7 +47,7 @@ public class World
 
 	private World()
 	{
-
+		
 	}
 
 	public void process()
@@ -94,6 +94,7 @@ public class World
 				/*ship.setRotation(m_inputListener.getRotation());
 				ship.setAcceleration(m_inputListener.getAcceleration());*/
 				MsgData msg = new MsgData();
+				msg.setParameter("ID", ship.getID());
 				msg.setParameter("rotation", m_inputListener.getRotation());
 				msg.setParameter("acceleration", m_inputListener.getAcceleration());
 				//msg.m_prevMsg = prevMsg;
@@ -153,18 +154,20 @@ public class World
 
 	private void initPlayers()
 	{
-		// Team 1
-		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP1_X, Const.START_TEAM1_SHIP1_Y), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), Const.TEAM1_COLOR);
-
-		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP2_X, Const.START_TEAM1_SHIP2_Y), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), Const.TEAM1_COLOR);
-
-		// Team 2
-		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP1_X, Const.START_TEAM2_SHIP1_Y), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), Const.TEAM2_COLOR);
-
-		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP2_X, Const.START_TEAM2_SHIP2_Y), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), Const.TEAM2_COLOR);
-
+		// The order in which the entities are added are important as the index corresponds to their ID:s
+		
 		// Ball
 		EntityManager.getInstance().addBall(new Vector2D(Const.BALL_X, Const.BALL_Y), new Vector2D(0.0, 0.0));
+		
+		// Team 1
+		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP1_X, Const.START_TEAM1_SHIP1_Y), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), Const.TEAM1_COLOR, Const.SHIP1_ID);
+
+		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP2_X, Const.START_TEAM1_SHIP2_Y), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), Const.TEAM1_COLOR, Const.SHIP2_ID);
+
+		// Team 2
+		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP1_X, Const.START_TEAM2_SHIP1_Y), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), Const.TEAM2_COLOR, Const.SHIP3_ID);
+
+		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP2_X, Const.START_TEAM2_SHIP2_Y), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), Const.TEAM2_COLOR, Const.SHIP4_ID);
 	}
 
 	public double getActualFps()

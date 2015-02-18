@@ -24,9 +24,9 @@ public class EntityManager
 	{
 	}
 
-	public void addShip(final Vector2D position, final Vector2D speed, final Vector2D direction, final Color color)
+	public void addShip(final Vector2D position, final Vector2D speed, final Vector2D direction, final Color color, final int id)
 	{
-		m_entities.add(new Ship(position, speed, direction, color));
+		m_entities.add(new Ship(position, speed, direction, color, id));
 	}
 
 	public void addBall(final Vector2D position, final Vector2D speed)
@@ -159,25 +159,31 @@ public class EntityManager
 		return m_entities;
 	}
 	
-	public void setAcceleration(double acceleration)
+	public void setAcceleration(int shipID, double acceleration)
 	{
-		GameEntity ge;
-		for(Iterator<GameEntity> itr = m_entities.iterator(); itr.hasNext();)
-		{
-			ge = itr.next();
-			
-			ge.setAcceleration(acceleration);
-		}
+		m_entities.get(shipID).setAcceleration(acceleration);
+		
+		
+//		GameEntity ge;
+//		for(Iterator<GameEntity> itr = m_entities.iterator(); itr.hasNext();)
+//		{
+//			ge = itr.next();
+//			
+//			ge.setAcceleration(acceleration);
+//		}
 	}
 	
-	public void setRotation(int rotation)
+	public void setRotation(int shipID, int rotation)
 	{
-		GameEntity ge;
-		for(Iterator<GameEntity> itr = m_entities.iterator(); itr.hasNext();)
-		{
-			ge = itr.next();
-			
-			ge.setRotation(rotation);
-		}
+		m_entities.get(shipID).setRotation(rotation);
+		
+		
+//		GameEntity ge;
+//		for(Iterator<GameEntity> itr = m_entities.iterator(); itr.hasNext();)
+//		{
+//			ge = itr.next();
+//			
+//			ge.setRotation(rotation);
+//		}
 	}
 }

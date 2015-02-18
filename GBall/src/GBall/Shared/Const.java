@@ -36,6 +36,10 @@ public final class Const
 	public final static double START_TEAM2_SHIP1_Y = START_TEAM1_SHIP1_Y;
 	public final static double START_TEAM2_SHIP2_X = START_TEAM2_SHIP1_X;
 	public final static double START_TEAM2_SHIP2_Y = DISPLAY_HEIGHT - START_TEAM2_SHIP1_Y;
+	public final static int	SHIP1_ID = 1;
+	public final static int	SHIP2_ID = 2;
+	public final static int	SHIP3_ID = 3;
+	public final static int	SHIP4_ID = 4;
 
 	public final static double BALL_X = DISPLAY_WIDTH / 2;
 	public final static double BALL_Y = DISPLAY_HEIGHT / 2;
