@@ -1,22 +1,15 @@
 package GBall.Client;
 
 import java.awt.event.*;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.Iterator;
-import java.util.LinkedList;
-
 import GBall.Shared.Const;
 import GBall.Shared.EntityManager;
-import GBall.Shared.GameEntity;
 import GBall.Shared.KeyConfig;
 import GBall.Shared.Listener;
 import GBall.Shared.MsgData;
-import GBall.Shared.Ship;
 import GBall.Shared.Vector2D;
 
 public class World
@@ -43,7 +36,7 @@ public class World
 	private final GameWindow m_gameWindow = new GameWindow("Client");
 	private InputListener m_inputListener;
 	
-	private Ship ship;
+//	private Ship ship;
 
 	private World()
 	{
@@ -58,18 +51,21 @@ public class World
 		// Marshal the state
 		try
 		{
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			m_socket = new DatagramSocket();
 			m_listener = new Listener(m_socket);
+			m_listener.start();
 			InetAddress m_serverAddress = InetAddress.getByName("localhost");
-			ObjectOutputStream oos = new ObjectOutputStream(baos);
-			oos.writeObject(new MsgData());
-			oos.flush();
-
-			byte[] buf = new byte[1024];
-
-			buf = baos.toByteArray();
-
+//			ObjectOutputStream oos = new ObjectOutputStream(baos);
+//			oos.writeObject(new MsgData());
+//			oos.flush();
+//
+//			byte[] buf = new byte[1024];
+//
+//			buf = baos.toByteArray();
+			
+			MsgData msg = new MsgData();
+			byte[] buf = msg.toString().getBytes();
 			DatagramPacket pack = new DatagramPacket(buf, buf.length, m_serverAddress, SERVERPORT);
 			m_socket.send(pack);
 
@@ -78,7 +74,7 @@ public class World
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		MsgData prevMsg = null;
+//		MsgData prevMsg = null;
 		while (true)
 		{
 			if (newFrame())
@@ -99,7 +95,7 @@ public class World
 				//msg.m_prevMsg = prevMsg;
 				sendMsg(msg);
 				//msg.m_prevMsg = null;
-				prevMsg = msg;
+//				prevMsg = msg;
 				EntityManager.getInstance().updatePositions();
 				EntityManager.getInstance().checkBorderCollisions(Const.DISPLAY_WIDTH, Const.DISPLAY_HEIGHT);
 				EntityManager.getInstance().checkShipCollisions();
@@ -112,18 +108,11 @@ public class World
 	{
 		try
 		{
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			InetAddress m_serverAddress;
 
 			m_serverAddress = InetAddress.getByName("localhost");
 
-			ObjectOutputStream oos = new ObjectOutputStream(baos);
-			oos.writeObject(msg);
-			oos.flush();
-
-			byte[] buf = new byte[1024];
-
-			buf = baos.toByteArray();
+			byte[] buf = msg.toString().getBytes();
 
 			DatagramPacket pack = new DatagramPacket(buf, buf.length, m_serverAddress, SERVERPORT);
 			m_socket.send(pack);

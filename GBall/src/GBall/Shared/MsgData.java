@@ -1,17 +1,19 @@
 package GBall.Shared;
 
-import java.io.Serializable;
+
+import java.net.InetAddress;
 
 import org.json.simple.*;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 @SuppressWarnings("unchecked")
-public class MsgData implements Serializable, Comparable<MsgData>
+public class MsgData implements Comparable<MsgData>
 {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
 	private JSONObject obj = new JSONObject();
 
 //	public Vector2D m_position;
@@ -27,17 +29,29 @@ public class MsgData implements Serializable, Comparable<MsgData>
 //	
 //	public MsgData m_prevMsg = null;
 
+	public final InetAddress m_address;
+	public final int m_port;
+	
+	private void stamp()
+	{
+		obj.put("timestamp", System.currentTimeMillis());
+	}
 	
 	public MsgData()
 	{
-//		m_position = new Vector2D();
-//		m_initialPosition = new Vector2D();
-//		m_initialDirection = new Vector2D();
-//		m_speed = new Vector2D();
-//		m_direction = new Vector2D();
-//		m_timestamp = System.currentTimeMillis();
+		m_address = null;
+		m_port = -1;
+		stamp();
+	}
+	
+	public MsgData(String JSONString, InetAddress address, int port) throws ParseException
+	{		
+		JSONParser p = new JSONParser();
+		obj = (JSONObject)p.parse(JSONString);
 		
-		obj.put("timestamp", System.currentTimeMillis());
+		m_address = address;
+		m_port = port;
+		stamp();
 	}
 	
 	public void setPrevMessage(JSONObject pObj)
@@ -47,17 +61,22 @@ public class MsgData implements Serializable, Comparable<MsgData>
 	
 	public void setParameter(String key, int value)
 	{
-		obj.put(key, value);
+		obj.put(key, new Integer(value));
 	}
 	
 	public void setParameter(String key, double value)
 	{
-		obj.put(key, value);
+		obj.put(key, new Double(value));
 	}
 	
 	public void setParameter(String key, Vector2D value)
 	{
 		obj.put(key, value);
+	}
+	
+	public JSONObject getJSONObj()
+	{
+		return obj;
 	}
 	
 	public Vector2D getVector(String key)
@@ -67,7 +86,7 @@ public class MsgData implements Serializable, Comparable<MsgData>
 	
 	public int getInt(String key)
 	{
-		return (int) obj.get(key);
+		return (int)((long) obj.get(key));
 	}
 	
 	public double getDouble(String key) 
@@ -136,5 +155,10 @@ public class MsgData implements Serializable, Comparable<MsgData>
 //		return string;
 		
 		return obj.toJSONString();
+	}
+	
+	public String debugInfo()
+	{
+		return toString() + " " + m_address + ":" + m_port;
 	}
 }
