@@ -93,13 +93,19 @@ public class MsgData implements Comparable<MsgData>
 	
 	public JSONObject getJSONObj(String key)
 	{
-		return (JSONObject) obj.get(key);
+		try
+		{
+			return (JSONObject)new JSONParser().parse((String) obj.get(key));
+		} catch (ParseException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public Vector2D getVector(String key)
 	{
-		JSONParser p = new JSONParser();
-		System.out.println(obj.get(key));
 		JSONObject o = (JSONObject) obj.get(key);
 		return (new Vector2D(o)) ;
 	}

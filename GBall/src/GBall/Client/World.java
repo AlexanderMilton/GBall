@@ -6,6 +6,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
+import org.json.simple.JSONObject;
+
 import GBall.Shared.Const;
 import GBall.Shared.EntityManager;
 import GBall.Shared.KeyConfig;
@@ -85,7 +87,7 @@ public class World
 			{
 				if((msg = m_listener.getMessage()) != null)
 				{
-					System.out.println(msg.debugInfo());
+//					System.out.println(msg.debugInfo());
 					updateState(msg);
 				}
 //				System.out.println(System.currentTimeMillis());
@@ -118,11 +120,9 @@ public class World
 	private void updateState(MsgData msg)
 	{
 		int count = msg.getInt("EntityCount");
-		System.out.println(count);
 		for(int i = 0; i < count; i++)
 		{
-			System.out.println("World: Update Entity " + i + " out of " + count);
-			EntityManager.getInstance().setState(i, new MsgData(msg.getJSONObj("Entity"+i)));
+			EntityManager.getInstance().setState(i, new MsgData(msg.getJSONObj("entity" + i)));
 		}
 		ScoreKeeper.getInstance().setScore(msg.getVector("Score"));
 	}
