@@ -1,5 +1,6 @@
 package GBall.Server;
 
+import java.awt.Color;
 import java.awt.event.*;
 import java.io.IOException;
 import java.net.DatagramSocket;
@@ -45,7 +46,7 @@ public class World
 
 	public void process()
 	{
-		initPlayers();
+		initBall();		// Ball must be initiated first
 
 		// Marshal the state
 		try
@@ -69,7 +70,6 @@ public class World
 
 		} catch (IOException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -79,14 +79,15 @@ public class World
 		{
 			if ((msg = m_listener.getMessage()) != null)
 			{
-				int shipID = msg.getInt("ID");
-				
 				System.out.println(msg.debugInfo());
 				ClientConnection c = findClient(msg);
 				if (c != null)
 				{
 					try
 					{
+						// Get player ID
+						int shipID = msg.getInt("ID");
+						
 						EntityManager.getInstance().setAcceleration(shipID, msg.getDouble("acceleration"));
 						EntityManager.getInstance().setRotation(shipID, msg.getInt("rotation"));
 					} catch (NullPointerException e)
@@ -95,7 +96,12 @@ public class World
 					}
 				} else
 				{
-					addClient(new ClientConnection(msg.m_address, msg.m_port, m_socket));
+					// A player has requested to join the game
+					ClientConnection newCC = new ClientConnection(msg.m_address, msg.m_port, m_socket); 
+					addClient(newCC);
+					
+					// Send reply with information
+					newCC.sendMessage(addNewPlayer().toString());
 				}
 			}
 			if (newFrame())
@@ -149,23 +155,97 @@ public class World
 		}
 		return rv;
 	}
-
-	private void initPlayers()
+	
+	private void initBall()
 	{
-		// The order in which the entities are added are important as the index corresponds to their ID:s
-		
 		// Ball
-		EntityManager.getInstance().addBall(new Vector2D(Const.BALL_X, Const.BALL_Y), new Vector2D(0.0, 0.0));
+		EntityManager.getInstance().addBall(new Vector2D(Const.BALL_X, Const.BALL_Y), new Vector2D(0.0, 0.0));	
+	}
+
+	private MsgData addNewPlayer()
+	{
+		// Get player count, create a new ID and create a reply message
+		int tp = EntityManager.getTotalPlayers();
+		MsgData msg = new MsgData();
 		
-		// Team 1
-		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP1_X, Const.START_TEAM1_SHIP1_Y), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), Const.TEAM1_COLOR, Const.SHIP1_ID);
+		// Players join teams in an alternating manner
+		if (tp % 2 == 1)
+		{
+			// Create a ship for Team 1
+			double xPos = Const.START_TEAM1_SHIP1_X;
+			double yPos = Const.START_TEAM1_SHIP1_Y + (tp * 25);
+			Vector2D position = new Vector2D(xPos, yPos);
+			Vector2D speed = new Vector2D(0.0, 0.0);
+			Vector2D direction = new Vector2D(1.0, 0.0);
+			Color color = Const.TEAM1_COLOR;
+			int ID = tp + 1;
+			
+			EntityManager.getInstance().addShip(position, speed, direction, color, ID);
 
-		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP2_X, Const.START_TEAM1_SHIP2_Y), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), Const.TEAM1_COLOR, Const.SHIP2_ID);
-
-		// Team 2
-		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP1_X, Const.START_TEAM2_SHIP1_Y), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), Const.TEAM2_COLOR, Const.SHIP3_ID);
-
-		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP2_X, Const.START_TEAM2_SHIP2_Y), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), Const.TEAM2_COLOR, Const.SHIP4_ID);
+			// Build message
+			msg.setParameter("position", position);
+			msg.setParameter("speed", speed);
+			msg.setParameter("direction", direction);
+			msg.setParameter("color", color);
+			msg.setParameter("newID", EntityManager.getTotalPlayers());
+		}
+		else
+		{
+			// Create a ship for Team 2
+			double xPos = Const.START_TEAM2_SHIP2_X;
+			double yPos = Const.START_TEAM2_SHIP2_Y - (tp * 25);
+			Vector2D position = new Vector2D(xPos, yPos);
+			Vector2D speed = new Vector2D(0.0, 0.0);
+			Vector2D direction = new Vector2D(-1.0, 0.0);
+			Color color = Const.TEAM2_COLOR;
+			int ID = tp + 1;
+			
+			EntityManager.getInstance().addShip(position, speed, direction, color, ID);
+			
+			// Build message
+			msg.setParameter("position", position);
+			msg.setParameter("speed", speed);
+			msg.setParameter("direction", direction);
+			msg.setParameter("color", color);
+			msg.setParameter("newID", EntityManager.getTotalPlayers());
+			
+		}		
+		
+		return msg;
+		
+		
+//		switch(EntityManager.getTotalPlayers())
+//		{
+//		case 0:
+//			// Team 1, Ship 1
+//			EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP1_X, Const.START_TEAM1_SHIP1_Y), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), Const.TEAM1_COLOR, Const.SHIP1_ID);
+//			return 1;
+//		
+//		case 1:
+//			// Team 1, Ship 2
+//			EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP2_X, Const.START_TEAM1_SHIP2_Y), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), Const.TEAM1_COLOR, Const.SHIP2_ID);
+//			return 2;
+//			
+//		case 2:
+//			// Team 2, Ship 3
+//			EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP1_X, Const.START_TEAM2_SHIP1_Y), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), Const.TEAM2_COLOR, Const.SHIP3_ID);
+//			return 3;
+//			
+//		case 3:
+//			// Team 2, Ship 4
+//			EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP2_X, Const.START_TEAM2_SHIP2_Y), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), Const.TEAM2_COLOR, Const.SHIP4_ID);
+//			return 4;
+//			
+//		case 4:
+//			// A fifth player tries to enter
+//			System.err.println("Error: server already full");
+//			return 0;
+//			
+//		default:
+//			System.err.println("Error: illegal player count: " + EntityManager.getTotalPlayers());
+//			System.exit(1);
+//		}
+//		return 0;
 	}
 
 	public double getActualFps()

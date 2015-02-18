@@ -66,10 +66,17 @@ public class World
 //
 //			buf = baos.toByteArray();
 			
+			// Send join request
 			MsgData msg = new MsgData();
 			byte[] buf = msg.toString().getBytes();
 			DatagramPacket pack = new DatagramPacket(buf, buf.length, m_serverAddress, SERVERPORT);
 			m_socket.send(pack);
+			
+			// Receive new player data
+			msg = m_listener.getMessage();
+			
+			// Create a ship using the new player data
+			ship = new Ship(msg.getVector("position"), msg.getVector("position"), msg.getVector("position"), msg.getColor("color"), msg.getInt("newID"));
 
 		} catch (IOException e)
 		{

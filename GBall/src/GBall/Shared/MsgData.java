@@ -1,6 +1,7 @@
 package GBall.Shared;
 
 
+import java.awt.Color;
 import java.net.InetAddress;
 
 import org.json.simple.*;
@@ -74,6 +75,11 @@ public class MsgData implements Comparable<MsgData>
 		obj.put(key, value);
 	}
 	
+	public void setParameter(String key, Color value)
+	{
+		obj.put(key, value);
+	}
+	
 	public JSONObject getJSONObj()
 	{
 		return obj;
@@ -97,6 +103,11 @@ public class MsgData implements Comparable<MsgData>
 	public long getTimestamp()
 	{
 		return (long) obj.get("timestamp");
+	}
+	
+	public Color getColor(String key)
+	{
+		return (Color) obj.get(key);
 	}
 
 //	public MsgData(Vector2D position, Vector2D initialPosition, Vector2D initialDirection, Vector2D speed, Vector2D direction)

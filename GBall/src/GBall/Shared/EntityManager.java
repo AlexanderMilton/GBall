@@ -2,7 +2,6 @@ package GBall.Shared;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -157,6 +156,12 @@ public class EntityManager
 	{
 
 		return m_entities;
+	}
+	
+	public static int getTotalPlayers()
+	{
+		// Account for the ball as an entity
+		return m_entities.size() - 1;
 	}
 	
 	public void setAcceleration(int shipID, double acceleration)
