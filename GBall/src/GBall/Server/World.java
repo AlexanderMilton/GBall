@@ -3,6 +3,8 @@ package GBall.Server;
 import java.awt.event.*;
 import java.io.IOException;
 import java.net.DatagramSocket;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import GBall.Client.GameWindow;
 import GBall.Shared.Const;
@@ -29,11 +31,12 @@ public class World
 
 	private double m_lastTime = System.currentTimeMillis();
 	private double m_actualFps = 0.0;
-	
+
 	private DatagramSocket m_socket;
 	private Listener m_listener;
+	private ArrayList<ClientConnection> m_clients = new ArrayList<ClientConnection>();
 
-	private  GameWindow m_gameWindow = new GameWindow("Server");
+	private GameWindow m_gameWindow = new GameWindow("Server");
 
 	private World()
 	{
@@ -43,27 +46,26 @@ public class World
 	public void process()
 	{
 		initPlayers();
-		
+
 		// Marshal the state
 		try
 		{
-//			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			// ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			m_socket = new DatagramSocket(SERVERPORT);
 			m_listener = new Listener(m_socket);
 			m_listener.start();
-			
-			
-			
-//			ObjectOutputStream oos = new ObjectOutputStream(baos);
-//			oos.writeObject(new MsgData());
-//			oos.flush();
-//
-//			byte[] buf = new byte[1024];
-//
-//			buf = baos.toByteArray();
-//
-//			DatagramPacket pack = new DatagramPacket(buf, buf.length, m_serverAddress, SERVERPORT);
-//			m_socket.send(pack);
+
+			// ObjectOutputStream oos = new ObjectOutputStream(baos);
+			// oos.writeObject(new MsgData());
+			// oos.flush();
+			//
+			// byte[] buf = new byte[1024];
+			//
+			// buf = baos.toByteArray();
+			//
+			// DatagramPacket pack = new DatagramPacket(buf, buf.length,
+			// m_serverAddress, SERVERPORT);
+			// m_socket.send(pack);
 
 		} catch (IOException e)
 		{
@@ -75,18 +77,25 @@ public class World
 		
 		while (true)
 		{
-			if((msg = m_listener.getMessage()) != null)
+			if ((msg = m_listener.getMessage()) != null)
 			{
 				int shipID = msg.getInt("ID");
 				
-				System.out.println(msg);
-				try
+				System.out.println(msg.debugInfo());
+				ClientConnection c = findClient(msg);
+				if (c != null)
 				{
-					EntityManager.getInstance().setAcceleration(shipID, msg.getDouble("acceleration"));
-					EntityManager.getInstance().setRotation(shipID, msg.getInt("rotation"));
-				} catch(NullPointerException e)
+					try
+					{
+						EntityManager.getInstance().setAcceleration(shipID, msg.getDouble("acceleration"));
+						EntityManager.getInstance().setRotation(shipID, msg.getInt("rotation"));
+					} catch (NullPointerException e)
+					{
+						// Do nothing;
+					}
+				} else
 				{
-					//Do nothing;
+					addClient(new ClientConnection(msg.m_address, msg.m_port, m_socket));
 				}
 			}
 			if (newFrame())
@@ -97,6 +106,31 @@ public class World
 				m_gameWindow.repaint();
 			}
 		}
+	}
+
+	private ClientConnection findClient(MsgData msg)
+	{
+		ClientConnection c;
+		for (Iterator<ClientConnection> itr = m_clients.iterator(); itr.hasNext();)
+		{
+			c = itr.next();
+
+			if (c.testAddress(msg.m_address) && c.testPort(msg.m_port))
+			{
+				return c;
+			}
+		}
+		return null;
+	}
+
+	private boolean addClient(ClientConnection c)
+	{
+		if (c != null)
+		{
+			m_clients.add(c);
+			return true;
+		}
+		return false;
 	}
 
 	private boolean newFrame()
@@ -142,7 +176,7 @@ public class World
 
 	public void addKeyListener(KeyListener k)
 	{
-//		m_gameWindow.addKeyListener(k);
+		// m_gameWindow.addKeyListener(k);
 	}
 
 }

@@ -1,11 +1,11 @@
 package GBall.Shared;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.util.concurrent.PriorityBlockingQueue;
+
+import org.json.simple.parser.ParseException;
 
 public class Listener extends Thread
 {
@@ -29,11 +29,14 @@ public class Listener extends Thread
 			try
 			{
 				m_socket.receive(packet);
-				ByteArrayInputStream bais = new ByteArrayInputStream(buf);
-				ObjectInputStream ois = new ObjectInputStream(bais);
-				MsgData msg = (MsgData) ois.readObject();
+				String jstr = new String(packet.getData(), packet.getOffset(), packet .getLength());
+				MsgData msg = new MsgData(jstr, packet.getAddress(), packet.getPort());
+				
+//				ByteArrayInputStream bais = new ByteArrayInputStream(buf);
+//				ObjectInputStream ois = new ObjectInputStream(bais);
+//				MsgData msg = (MsgData) ois.readObject();
 				m_messages.add(msg);
-			} catch (IOException | ClassNotFoundException e)
+			} catch (IOException | ParseException e)
 			{
 				continue;
 			}
