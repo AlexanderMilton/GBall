@@ -24,20 +24,24 @@ public class Listener extends Thread
 	{
 		while(m_isRunning)
 		{
-			byte[] buf = new byte[1024];
+			byte[] buf = new byte[2048];
 			DatagramPacket packet = new DatagramPacket(buf, buf.length);
 			try
 			{
 				m_socket.receive(packet);
 				String jstr = new String(packet.getData(), packet.getOffset(), packet .getLength());
+//				System.out.println(jstr);
 				MsgData msg = new MsgData(jstr, packet.getAddress(), packet.getPort());
 				
 //				ByteArrayInputStream bais = new ByteArrayInputStream(buf);
 //				ObjectInputStream ois = new ObjectInputStream(bais);
 //				MsgData msg = (MsgData) ois.readObject();
 				m_messages.add(msg);
+//				System.out.println("Message count: " + m_messages.size());
 			} catch (IOException | ParseException e)
 			{
+				System.err.println("Failed to parse string");
+				e.printStackTrace();
 				continue;
 			}
 		}

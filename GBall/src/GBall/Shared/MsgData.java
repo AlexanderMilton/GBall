@@ -1,7 +1,6 @@
 package GBall.Shared;
 
 
-import java.awt.Color;
 import java.net.InetAddress;
 
 import org.json.simple.*;
@@ -45,6 +44,13 @@ public class MsgData implements Comparable<MsgData>
 		stamp();
 	}
 	
+	public MsgData(JSONObject o)
+	{
+		obj = o;
+		m_address = null;
+		m_port = -1;
+	}
+	
 	public MsgData(String JSONString, InetAddress address, int port) throws ParseException
 	{		
 		JSONParser p = new JSONParser();
@@ -75,9 +81,9 @@ public class MsgData implements Comparable<MsgData>
 		obj.put(key, value);
 	}
 	
-	public void setParameter(String key, Color value)
+	public void setParameter(String key, JSONObject value)
 	{
-		obj.put(key, value);
+		obj.put(key, value.toJSONString());
 	}
 	
 	public JSONObject getJSONObj()
@@ -85,9 +91,23 @@ public class MsgData implements Comparable<MsgData>
 		return obj;
 	}
 	
+	public JSONObject getJSONObj(String key)
+	{
+		try
+		{
+			return (JSONObject)new JSONParser().parse((String) obj.get(key));
+		} catch (ParseException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public Vector2D getVector(String key)
 	{
-		return (Vector2D) obj.get(key);
+		JSONObject o = (JSONObject) obj.get(key);
+		return (new Vector2D(o)) ;
 	}
 	
 	public int getInt(String key)
@@ -105,10 +125,6 @@ public class MsgData implements Comparable<MsgData>
 		return (long) obj.get("timestamp");
 	}
 	
-	public Color getColor(String key)
-	{
-		return (Color) obj.get(key);
-	}
 
 //	public MsgData(Vector2D position, Vector2D initialPosition, Vector2D initialDirection, Vector2D speed, Vector2D direction)
 //	{

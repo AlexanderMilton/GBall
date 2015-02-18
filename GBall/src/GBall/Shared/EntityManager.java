@@ -1,7 +1,7 @@
 package GBall.Shared;
 
-import java.awt.Color;
 import java.awt.Graphics;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -23,14 +23,22 @@ public class EntityManager
 	{
 	}
 
-	public void addShip(final Vector2D position, final Vector2D speed, final Vector2D direction, final Color color, final int id)
-	{
+	public void addShip(final Vector2D position, final Vector2D speed, final Vector2D direction, final int color, final int id)
+	{		
 		m_entities.add(new Ship(position, speed, direction, color, id));
+		Collections.sort(m_entities);
+	}
+	
+	public void addShip(Ship ship)
+	{
+		m_entities.add(ship);
+		Collections.sort(m_entities);
 	}
 
 	public void addBall(final Vector2D position, final Vector2D speed)
 	{
 		m_entities.add(new Ball(position, speed));
+		Collections.sort(m_entities);
 	}
 
 	public void updatePositions()
@@ -162,6 +170,11 @@ public class EntityManager
 	{
 		// Account for the ball as an entity
 		return m_entities.size() - 1;
+	}
+
+	public void setState(int index, MsgData msg)
+	{
+		m_entities.get(index).setState(msg);
 	}
 	
 	public void setAcceleration(int shipID, double acceleration)

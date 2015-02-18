@@ -11,16 +11,21 @@ public class Ship extends GameEntity// implements KeyListener
 	 */
 	private static final long serialVersionUID = 1L;
 	private Color m_color;
-	private int m_ID;
+	
 	private int rotation = 0; // Set to 1 when rotating clockwise, -1 when
 								// rotating counterclockwise
 	private boolean braking = false;
 
-	public Ship(final Vector2D position, final Vector2D speed, final Vector2D direction, final Color col, final int id)
+	public Ship(final Vector2D position, final Vector2D speed, final Vector2D direction, final int col, final int id)
 	{
-		super(position, speed, direction, Const.SHIP_MAX_ACCELERATION, Const.SHIP_MAX_SPEED, Const.SHIP_FRICTION);
-		m_color = col;
-		m_ID = id;
+		super(position, speed, direction, Const.SHIP_MAX_ACCELERATION, Const.SHIP_MAX_SPEED, Const.SHIP_FRICTION, id);
+		if(col == 0)
+		{
+			m_color = Const.TEAM1_COLOR;
+		} else
+		{
+			m_color = Const.TEAM2_COLOR;
+		}
 	//	World.getInstance().addKeyListener(this);
 	}
 
@@ -83,6 +88,12 @@ public class Ship extends GameEntity// implements KeyListener
 	public void setRotation(int r)
 	{
 		rotation = r;
+	}
+	
+	@Override
+	public int getRotation()
+	{
+		return rotation;
 	}
 
 	@Override

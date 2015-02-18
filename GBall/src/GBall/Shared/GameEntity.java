@@ -2,7 +2,7 @@ package GBall.Shared;
 
 import java.io.Serializable;
 
-public abstract class GameEntity implements Serializable
+public abstract class GameEntity implements Serializable, Comparable<GameEntity>
 {
 	/**
 	 * 
@@ -12,6 +12,7 @@ public abstract class GameEntity implements Serializable
 	private final Vector2D m_initialPosition;
 	private final Vector2D m_initialDirection;
 	private final Vector2D m_speed;
+	protected int m_ID;
 	private final Vector2D m_direction; // Should always be unit vector;
 										// determines the object's facing
 
@@ -28,7 +29,7 @@ public abstract class GameEntity implements Serializable
 
 	public abstract boolean givesPoints();
 
-	public GameEntity(final Vector2D position, final Vector2D speed, final Vector2D direction, double maxAcceleration, double maxSpeed, double friction)
+	public GameEntity(final Vector2D position, final Vector2D speed, final Vector2D direction, double maxAcceleration, double maxSpeed, double friction, int id)
 	{
 		m_position = position;
 		m_speed = speed;
@@ -40,6 +41,7 @@ public abstract class GameEntity implements Serializable
 		m_lastUpdateTime = System.currentTimeMillis();
 		m_initialPosition = new Vector2D(position.getX(), position.getY());
 		m_initialDirection = new Vector2D(direction.getX(), direction.getY());
+		m_ID = id;
 	}
 	
 	public void setRotation(int rotation)
@@ -116,6 +118,11 @@ public abstract class GameEntity implements Serializable
 	{
 		m_direction.rotate(radians);
 	}
+	
+	public int getRotation()
+	{
+		return 0;
+	}
 
 	public Vector2D getPosition()
 	{
@@ -144,7 +151,53 @@ public abstract class GameEntity implements Serializable
 
 	public MsgData getMsgData()
 	{
+		MsgData msg = new MsgData();
+		msg.setParameter("ID", m_ID);
+		msg.setParameter("position", m_position);
+		msg.setParameter("direction", m_direction);
+		msg.setParameter("speed", m_speed);
+		msg.setParameter("rotation", getRotation());
+		msg.setParameter("acceleration", m_acceleration);
 		//return new MsgData(m_position, m_initialPosition, m_initialDirection, m_speed, m_direction);
-		return null;
+//		System.out.println(msg.toString());
+		return msg;
+	}
+	
+	public void setState(MsgData msg)
+	{
+		try
+		{
+		if(msg == null || msg.getInt("ID") != m_ID)
+		{
+			System.out.println("Update failed: " + msg + " " + msg.getInt("ID") + " " + m_ID);
+			return;
+		}
+//		System.out.println("Update entity: " + m_ID);
+		m_position.set(msg.getVector("position"));
+		m_direction.set(msg.getVector("direction"));
+		m_speed.set(msg.getVector("speed"));
+		setRotation(msg.getInt("rotation"));
+		m_acceleration = msg.getDouble("acceleration");
+		} catch(NullPointerException e)
+		{
+		
+		}
+	}
+	
+	public int compareTo(GameEntity ge)
+	{
+		if(ge == null)
+		{
+			throw new NullPointerException();
+		}
+		
+		if(m_ID < ge.m_ID)
+		{
+			return -1;
+		} else if(m_ID > ge.m_ID)
+		{
+			return 1;
+		}
+		return 0;
 	}
 }
