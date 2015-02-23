@@ -135,7 +135,7 @@ public class World
 		if (count > EntityManager.getState().size())
 		{
 			System.out.println("NEW ENTITY DETECTED. COUNT: " + count);
-			initNewEntity(count);	// TODO: Fix this to correct index out of bounds when updating without f***ing up the colours!
+			initNewEntity(count-1);
 		}
 		
 		for(int i = 0; i < count; i++)
@@ -185,26 +185,26 @@ public class World
 		// Create players in arbitrary positions to be updated with messages
 		for(int i = 1; i < ship.getID(); i++)
 		{
-			if (i % 2 == 1)
+			if (i % 2 == 0)
 			{
-				EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP1_X, Const.START_TEAM1_SHIP1_Y + (i * 25)), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), 0, i);
+				EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP1_X, Const.START_TEAM1_SHIP1_Y + (i * 50)), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), 0, i);
 			}
 			else
 			{
-				EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP1_X, Const.START_TEAM2_SHIP1_Y + (i * 25)), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), 1, i);
+				EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP1_X, Const.START_TEAM2_SHIP1_Y + (i * 50)), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), 1, i);
 			}
 		}
 	}
 
 	private void initNewEntity(int count)
 	{
-		if (count % 2 == 1)
+		if (count % 2 == 0)
 		{
-			EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP1_X, Const.START_TEAM1_SHIP1_Y + (count * 25)), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), 0, count);
+			EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP1_X, Const.START_TEAM1_SHIP1_Y + (count * 50)), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), 0, count);
 		}
 		else
 		{
-			EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP1_X, Const.START_TEAM2_SHIP1_Y + (count * 25)), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), 1, count);
+			EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP1_X, Const.START_TEAM2_SHIP1_Y + (count * 50)), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), 1, count);
 		}
 	}
 
