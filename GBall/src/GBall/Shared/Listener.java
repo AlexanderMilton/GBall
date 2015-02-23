@@ -11,7 +11,7 @@ public class Listener extends Thread
 {
 	private final DatagramSocket m_socket;
 	
-	private PriorityBlockingQueue<MsgData> m_messages = new PriorityBlockingQueue<MsgData>();
+	protected PriorityBlockingQueue<MsgData> m_messages = new PriorityBlockingQueue<MsgData>();
 	
 	private boolean m_isRunning = true;
 	
@@ -36,7 +36,7 @@ public class Listener extends Thread
 //				ByteArrayInputStream bais = new ByteArrayInputStream(buf);
 //				ObjectInputStream ois = new ObjectInputStream(bais);
 //				MsgData msg = (MsgData) ois.readObject();
-				m_messages.add(msg);
+				add(msg);
 //				System.out.println("Message count: " + m_messages.size());
 			} catch (IOException | ParseException e)
 			{
@@ -45,6 +45,11 @@ public class Listener extends Thread
 				continue;
 			}
 		}
+	}
+	
+	protected void add(MsgData msg)
+	{
+		m_messages.add(msg);
 	}
 	
 	public void kill()

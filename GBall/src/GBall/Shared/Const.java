@@ -9,8 +9,8 @@ public final class Const
 	public final static double TARGET_FPS = 50;
 	public final static double FRAME_INCREMENT = 1000 / TARGET_FPS;
 	public final static String APP_NAME = "Geometry Ball Tournament 2014";
-	public final static int DISPLAY_WIDTH = 1024;
-	public final static int DISPLAY_HEIGHT = 758;
+	public final static int DISPLAY_WIDTH = 960;
+	public final static int DISPLAY_HEIGHT = 540;
 	public final static int WINDOW_TOP_HEIGHT = 30;
 	public final static int WINDOW_BORDER_WIDTH = 5;
 	public final static int WINDOW_BOTTOM_HEIGHT = 5;
@@ -18,6 +18,7 @@ public final class Const
 	public final static int FONT_SIZE = 24;
 	
 	public final static double SURROGATE_MAX_DIFFERENCE = 50;
+	public final static double SURROGATE_MIN_DIFFERENCE = 5;
 
 	public final static boolean SHOW_FPS = false;
 	public final static Color FPS_TEXT_COLOR = Color.RED;

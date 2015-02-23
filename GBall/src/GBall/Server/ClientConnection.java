@@ -11,6 +11,7 @@ public class ClientConnection
 	private final InetAddress m_address;
 	private final int m_port;
 	private final DatagramSocket m_socket;
+	public long m_lastUpdate;
 
 	public ClientConnection(InetAddress adr, int port, DatagramSocket socket)
 	{
