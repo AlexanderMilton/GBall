@@ -142,6 +142,12 @@ public class Vector2D implements Serializable, JSONAware
 			m_y /= c;
 		}
 	}
+	
+	public void lerp(Vector2D target, float f)
+	{
+		m_x = (m_x * (1 - f) + target.getX() * f);
+		m_y = (m_y * (1 - f) + target.getY() * f);
+	}
 
 	public Vector2D minusOperator(final Vector2D v)
 	{

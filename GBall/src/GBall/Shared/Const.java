@@ -16,6 +16,8 @@ public final class Const
 	public final static int WINDOW_BOTTOM_HEIGHT = 5;
 	public final static Color BG_COLOR = Color.BLACK;
 	public final static int FONT_SIZE = 24;
+	
+	public final static double SURROGATE_MAX_DIFFERENCE = 50;
 
 	public final static boolean SHOW_FPS = false;
 	public final static Color FPS_TEXT_COLOR = Color.RED;

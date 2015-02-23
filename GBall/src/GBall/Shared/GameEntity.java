@@ -1,13 +1,11 @@
 package GBall.Shared;
 
-import java.io.Serializable;
 
-public abstract class GameEntity implements Serializable, Comparable<GameEntity>
+public abstract class GameEntity implements Comparable<GameEntity>
 {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
 	private final Vector2D m_position;
 	private final Vector2D m_initialPosition;
 	private final Vector2D m_initialDirection;
@@ -18,10 +16,10 @@ public abstract class GameEntity implements Serializable, Comparable<GameEntity>
 
 	private double m_acceleration; // Accelerates by multiplying this with
 									// m_direction
-	private long m_lastUpdateTime;
-	private double m_maxAcceleration;
+	protected long m_lastUpdateTime;
+	protected double m_maxAcceleration;
 	private double m_maxSpeed;
-	private double m_friction;
+	protected double m_friction;
 
 	public abstract void render(java.awt.Graphics g);
 
@@ -81,21 +79,32 @@ public abstract class GameEntity implements Serializable, Comparable<GameEntity>
 
 	public void scaleSpeed(double scale)
 	{
-		m_speed.scale(scale);
-		if (m_speed.length() > m_maxSpeed)
+		scaleSpeed(scale, m_speed);
+	}
+	
+	public void scaleSpeed(double scale, Vector2D speed)
+	{
+		speed.scale(scale);
+		if (speed.length() > m_maxSpeed)
 		{
-			m_speed.setLength(m_maxSpeed);
+			speed.setLength(m_maxSpeed);
 		}
 	}
-
+	
 	public void changeSpeed(final Vector2D delta)
 	{
-		m_speed.add(delta);
-		if (m_speed.length() > m_maxSpeed)
+		changeSpeed(delta, m_speed);
+	}
+
+	public void changeSpeed(final Vector2D delta, Vector2D speed)
+	{
+		speed.add(delta);
+		if (speed.length() > m_maxSpeed)
 		{
-			m_speed.setLength(m_maxSpeed);
+			speed.setLength(m_maxSpeed);
 		}
 	}
+	
 
 	public void resetPosition()
 	{

@@ -50,7 +50,7 @@ public class World
 	{
 		m_inputListener = new InputListener(new KeyConfig(KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_UP));
 //		initPlayers();
-		EntityManager.getInstance().addBall(new Vector2D(Const.BALL_X, Const.BALL_Y), new Vector2D());
+		EntityManager.getInstance().addBall(new SurrogateBall(new Vector2D(Const.BALL_X, Const.BALL_Y), new Vector2D()));
 
 		// Marshal the state
 		try
@@ -74,7 +74,7 @@ public class World
 			}
 			
 			// Create a ship using the new player data
-			ship = new Ship(msg.getVector("position"), msg.getVector("speed"), msg.getVector("direction"), msg.getInt("color"), msg.getInt("newID"));
+			ship = new SurrogateShip(msg.getVector("position"), msg.getVector("speed"), msg.getVector("direction"), msg.getInt("color"), msg.getInt("newID"));
 			EntityManager.getInstance().addShip(ship);
 			
 			// Create already existing entities
@@ -114,10 +114,12 @@ public class World
 				//msg.m_prevMsg = prevMsg;
 //				System.out.println(EntityManager.getState().get(1).getPosition().toJSONString());
 				sendMsg(msg);
+				ship.setAcceleration(m_inputListener.getAcceleration());
+				ship.setRotation(m_inputListener.getRotation());
 				//msg.m_prevMsg = null;
 //				prevMsg = msg;
 				EntityManager.getInstance().updatePositions();
-				EntityManager.getInstance().checkBorderCollisions(Const.DISPLAY_WIDTH, Const.DISPLAY_HEIGHT);
+				EntityManager.getInstance().checkBorderCollisions(Const.DISPLAY_WIDTH, Const.DISPLAY_HEIGHT, false);
 				EntityManager.getInstance().checkShipCollisions();
 				m_gameWindow.repaint();
 			}

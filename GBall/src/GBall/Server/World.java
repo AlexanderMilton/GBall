@@ -111,7 +111,7 @@ public class World
 			if (newFrame())
 			{
 				EntityManager.getInstance().updatePositions();
-				EntityManager.getInstance().checkBorderCollisions(Const.DISPLAY_WIDTH, Const.DISPLAY_HEIGHT);
+				EntityManager.getInstance().checkBorderCollisions(Const.DISPLAY_WIDTH, Const.DISPLAY_HEIGHT, true);
 				EntityManager.getInstance().checkShipCollisions();
 				m_gameWindow.repaint();
 				MsgData stateMsg = packState(EntityManager.getState()); 
