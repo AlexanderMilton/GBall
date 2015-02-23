@@ -8,7 +8,6 @@ public class Ball extends GameEntity
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
 	private Color m_color;
 
 	public Ball(final Vector2D position, final Vector2D speed)

@@ -9,8 +9,7 @@ public class Ship extends GameEntity// implements KeyListener
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
-	private Color m_color;
+	protected Color m_color;
 	
 	private int rotation = 0; // Set to 1 when rotating clockwise, -1 when
 								// rotating counterclockwise
@@ -26,63 +25,7 @@ public class Ship extends GameEntity// implements KeyListener
 		{
 			m_color = Const.TEAM2_COLOR;
 		}
-	//	World.getInstance().addKeyListener(this);
 	}
-
-	/*@Override
-	public void keyPressed(KeyEvent e)
-	{
-		try
-		{
-			if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
-			{
-				System.exit(0);
-			} else if (e.getKeyCode() == m_keyConfig.rightKey())
-			{
-				rotation = 1;
-			} else if (e.getKeyCode() == m_keyConfig.leftKey())
-			{
-				rotation = -1;
-			} else if (e.getKeyCode() == m_keyConfig.accelerateKey())
-			{
-				setAcceleration(Const.SHIP_MAX_ACCELERATION);
-			} else if (e.getKeyCode() == m_keyConfig.brakeKey())
-			{
-				braking = true;
-			}
-		} catch (Exception x)
-		{
-			System.err.println(x);
-		}
-	}
-
-	public void keyReleased(KeyEvent e)
-	{
-		try
-		{
-			if (e.getKeyCode() == m_keyConfig.rightKey() && rotation == 1)
-			{
-				rotation = 0;
-			} else if (e.getKeyCode() == m_keyConfig.leftKey() && rotation == -1)
-			{
-				rotation = 0;
-			} else if (e.getKeyCode() == m_keyConfig.accelerateKey())
-			{
-				setAcceleration(0);
-			} else if (e.getKeyCode() == m_keyConfig.brakeKey())
-			{
-				braking = false;
-			}
-		} catch (Exception x)
-		{
-			System.out.println(x);
-		}
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e)
-	{
-	}*/
 	
 	@Override
 	public void setRotation(int r)

@@ -57,7 +57,7 @@ public class EntityManager
 		}
 	}
 
-	public void checkBorderCollisions(int screenWidth, int screenHeight)
+	public void checkBorderCollisions(int screenWidth, int screenHeight, boolean server)
 	{
 		double newX = 0.0, newY = 0.0, radius = 0;
 		boolean reset = false;
@@ -101,7 +101,7 @@ public class EntityManager
 			e.setPosition(newX, newY);
 		}
 
-		if (reset)
+		if (reset && server)
 		{
 			resetPositions();
 		}
@@ -180,28 +180,10 @@ public class EntityManager
 	public void setAcceleration(int shipID, double acceleration)
 	{
 		m_entities.get(shipID).setAcceleration(acceleration);
-		
-		
-//		GameEntity ge;
-//		for(Iterator<GameEntity> itr = m_entities.iterator(); itr.hasNext();)
-//		{
-//			ge = itr.next();
-//			
-//			ge.setAcceleration(acceleration);
-//		}
 	}
 	
 	public void setRotation(int shipID, int rotation)
 	{
 		m_entities.get(shipID).setRotation(rotation);
-		
-		
-//		GameEntity ge;
-//		for(Iterator<GameEntity> itr = m_entities.iterator(); itr.hasNext();)
-//		{
-//			ge = itr.next();
-//			
-//			ge.setRotation(rotation);
-//		}
 	}
 }
