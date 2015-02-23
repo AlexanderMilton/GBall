@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import GBall.Client.GameWindow;
+//import GBall.Client.GameWindow;
 import GBall.Shared.Const;
 import GBall.Shared.EntityManager;
 import GBall.Shared.GameEntity;
@@ -39,7 +39,7 @@ public class World
 	private Listener m_listener;
 	private ArrayList<ClientConnection> m_clients = new ArrayList<ClientConnection>();
 
-	private GameWindow m_gameWindow = new GameWindow("Server");
+//	private GameWindow m_gameWindow = new GameWindow("Server");
 
 	private World()
 	{
@@ -92,6 +92,7 @@ public class World
 						
 						EntityManager.getInstance().setAcceleration(shipID, msg.getDouble("acceleration"));
 						EntityManager.getInstance().setRotation(shipID, msg.getInt("rotation"));
+						c.m_lastUpdate = msg.getTimestamp();
 					} catch (NullPointerException e)
 					{
 						// Do nothing;
@@ -113,9 +114,16 @@ public class World
 				EntityManager.getInstance().updatePositions();
 				EntityManager.getInstance().checkBorderCollisions(Const.DISPLAY_WIDTH, Const.DISPLAY_HEIGHT, true);
 				EntityManager.getInstance().checkShipCollisions();
-				m_gameWindow.repaint();
+//				m_gameWindow.repaint();
 				MsgData stateMsg = packState(EntityManager.getState()); 
 				broadcast(stateMsg);
+				String diffTimes = "";
+				long currTime = System.currentTimeMillis();
+				for(Iterator<ClientConnection> itr = m_clients.iterator(); itr.hasNext(); )
+				{
+					diffTimes = diffTimes + String.format("%04d ", new Integer((int)(currTime - itr.next().m_lastUpdate))); 
+				}
+				System.out.println(diffTimes);
 			}
 		}
 	}
@@ -149,7 +157,7 @@ public class World
 	{
 		double currentTime = System.currentTimeMillis();
 		double delta = currentTime - m_lastTime;
-		boolean rv = (delta > Const.FRAME_INCREMENT);
+		boolean rv = (delta > (Const.FRAME_INCREMENT * 2));
 		if (rv)
 		{
 			m_lastTime += Const.FRAME_INCREMENT;
@@ -176,7 +184,7 @@ public class World
 		 * 		give already joined player the new player info
 		*/
 		
-		for (int i = 0; i < EntityManager.getInstance().getTotalPlayers(); ++i)
+		for (int i = 0; i < EntityManager.getTotalPlayers(); ++i)
 		{
 			// Send a message to all players containing all entity information form them to initialise
 			// Alternatively, have them initiate a ship in their own world and let messages update them

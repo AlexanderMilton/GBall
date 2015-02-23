@@ -1,6 +1,7 @@
 package GBall.Client;
 
 import GBall.Shared.Ball;
+import GBall.Shared.Const;
 import GBall.Shared.Vector2D;
 
 public class SurrogateBall extends Ball
@@ -33,7 +34,23 @@ public class SurrogateBall extends Ball
 	
 	private void checkRealState()
 	{
+		long stateAge = System.currentTimeMillis() - m_lastUpdateTime;
 		float f = 0.3f;
+		if(stateAge > 0)
+		{
+			f = 10.0f / (float)stateAge;
+//			System.out.println(f + " " + stateDiff + " " + stateAge);
+		}
+		
+		double deltaX = Math.abs(m_surPosition.getX() - super.getPosition().getX());
+		double deltaY = Math.abs(m_surPosition.getY() - super.getPosition().getY());
+		
+		if(deltaX > Const.SURROGATE_MAX_DIFFERENCE ||
+		   deltaY > Const.SURROGATE_MAX_DIFFERENCE)
+		{
+			m_surPosition.set(super.getPosition());
+//			m_surDirection.set(super.getDirection());
+		}
 		/*if(Math.abs(m_surPosition.getX() - super.getPosition().getX()) > Const.SURROGATE_MAX_DIFFERENCE)
 		{
 			m_surPosition.setX(super.getPosition().getX());

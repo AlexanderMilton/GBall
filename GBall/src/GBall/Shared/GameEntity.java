@@ -12,10 +12,10 @@ public abstract class GameEntity implements Comparable<GameEntity>
 	private final Vector2D m_speed;
 	protected int m_ID;
 	private final Vector2D m_direction; // Should always be unit vector;
-										// determines the object's facing
+	// determines the object's facing
 
 	private double m_acceleration; // Accelerates by multiplying this with
-									// m_direction
+	// m_direction
 	protected long m_lastUpdateTime;
 	protected double m_maxAcceleration;
 	private double m_maxSpeed;
@@ -41,7 +41,7 @@ public abstract class GameEntity implements Comparable<GameEntity>
 		m_initialDirection = new Vector2D(direction.getX(), direction.getY());
 		m_ID = id;
 	}
-	
+
 	public void setRotation(int rotation)
 	{
 		// do nothing
@@ -81,7 +81,7 @@ public abstract class GameEntity implements Comparable<GameEntity>
 	{
 		scaleSpeed(scale, m_speed);
 	}
-	
+
 	public void scaleSpeed(double scale, Vector2D speed)
 	{
 		speed.scale(scale);
@@ -90,7 +90,7 @@ public abstract class GameEntity implements Comparable<GameEntity>
 			speed.setLength(m_maxSpeed);
 		}
 	}
-	
+
 	public void changeSpeed(final Vector2D delta)
 	{
 		changeSpeed(delta, m_speed);
@@ -104,7 +104,7 @@ public abstract class GameEntity implements Comparable<GameEntity>
 			speed.setLength(m_maxSpeed);
 		}
 	}
-	
+
 
 	public void resetPosition()
 	{
@@ -127,7 +127,7 @@ public abstract class GameEntity implements Comparable<GameEntity>
 	{
 		m_direction.rotate(radians);
 	}
-	
+
 	public int getRotation()
 	{
 		return 0;
@@ -168,38 +168,40 @@ public abstract class GameEntity implements Comparable<GameEntity>
 		msg.setParameter("rotation", getRotation());
 		msg.setParameter("acceleration", m_acceleration);
 		//return new MsgData(m_position, m_initialPosition, m_initialDirection, m_speed, m_direction);
-//		System.out.println(msg.toString());
+		//		System.out.println(msg.toString());
 		return msg;
 	}
-	
+
 	public void setState(MsgData msg)
 	{
 		try
 		{
-		if(msg == null || msg.getInt("ID") != m_ID)
-		{
-			System.out.println("Update failed: " + msg + " " + msg.getInt("ID") + " " + m_ID);
-			return;
-		}
-//		System.out.println("Update entity: " + m_ID);
-		m_position.set(msg.getVector("position"));
-		m_direction.set(msg.getVector("direction"));
-		m_speed.set(msg.getVector("speed"));
-		setRotation(msg.getInt("rotation"));
-		m_acceleration = msg.getDouble("acceleration");
+			if(msg == null || msg.getInt("ID") != m_ID)
+			{
+				System.out.println("Update failed: " + msg + " " + msg.getInt("ID") + " " + m_ID);
+				return;
+			}
+//			System.out.println("Update entity: " + m_ID);
+//			System.out.println(msg.getVector("position"));
+			m_position.set(msg.getVector("position"));
+			m_direction.set(msg.getVector("direction"));
+			m_speed.set(msg.getVector("speed"));
+			setRotation(msg.getInt("rotation"));
+			m_acceleration = msg.getDouble("acceleration");
+			m_lastUpdateTime = msg.getTimestamp();
 		} catch(NullPointerException e)
 		{
-		
+
 		}
 	}
-	
+
 	public int compareTo(GameEntity ge)
 	{
 		if(ge == null)
 		{
 			throw new NullPointerException();
 		}
-		
+
 		if(m_ID < ge.m_ID)
 		{
 			return -1;

@@ -79,8 +79,6 @@ public class World
 			
 			// Create already existing entities
 			initEntities();
-			
-
 		} catch (IOException e)
 		{
 			// TODO Auto-generated catch block
