@@ -102,8 +102,10 @@ public class World
 					ClientConnection newCC = new ClientConnection(msg.m_address, msg.m_port, m_socket); 
 					addClient(newCC);
 					
-					// Send reply with information
-					newCC.sendMessage(addNewPlayer().toString());
+					// Create a ship and distribute the ship information to all clients
+					MsgData shipInfo = addNewPlayer();
+					initPlayer(shipInfo);
+					newCC.sendMessage(shipInfo.toString());
 				}
 			}
 			if (newFrame())
@@ -164,6 +166,22 @@ public class World
 	{
 		// Ball
 		EntityManager.getInstance().addBall(new Vector2D(Const.BALL_X, Const.BALL_Y), new Vector2D(0.0, 0.0));	
+	}
+	
+	private void initPlayer(MsgData shipInfo)
+	{
+		/* initiate player 
+		 * 
+		 * TODO: 	
+		 * 		give already joined player the new player info
+		*/
+		
+		for (int i = 0; i < EntityManager.getInstance().getTotalPlayers(); ++i)
+		{
+			// Send a message to all players containing all entity information form them to initialise
+			// Alternatively, have them initiate a ship in their own world and let messages update them
+		}
+		
 	}
 	
 	private MsgData packState(LinkedList<GameEntity> list)
@@ -233,7 +251,7 @@ public class World
 			msg.setParameter("speed", speed);
 			msg.setParameter("direction", direction);
 			msg.setParameter("color", color);
-			msg.setParameter("newID", EntityManager.getTotalPlayers());
+			msg.setParameter("newID", ID);
 		}
 		else
 		{
@@ -253,7 +271,7 @@ public class World
 			msg.setParameter("speed", speed);
 			msg.setParameter("direction", direction);
 			msg.setParameter("color", color);
-			msg.setParameter("newID", EntityManager.getTotalPlayers());
+			msg.setParameter("newID", ID);
 			
 		}		
 		

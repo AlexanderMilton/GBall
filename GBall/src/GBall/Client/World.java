@@ -74,8 +74,11 @@ public class World
 			}
 			
 			// Create a ship using the new player data
-			ship = new Ship(msg.getVector("position"), msg.getVector("position"), msg.getVector("position"), msg.getInt("color"), msg.getInt("newID"));
+			ship = new Ship(msg.getVector("position"), msg.getVector("speed"), msg.getVector("direction"), msg.getInt("color"), msg.getInt("newID"));
 			EntityManager.getInstance().addShip(ship);
+			
+			// Create already existing entities
+			initEntities();
 			
 
 		} catch (IOException e)
@@ -166,6 +169,25 @@ public class World
 			m_actualFps = 1000 / delta;
 		}
 		return rv;
+	}
+	
+	private void initEntities()
+	{
+		// Create a ball to be updated with messages
+//		EntityManager.getInstance().addBall(new Vector2D(Const.BALL_X, Const.BALL_Y), new Vector2D(0.0, 0.0));
+		
+		// Create players in arbitrary positions to be updated with messages
+		for(int i = 1; i < ship.getID(); i++)
+		{
+			if (i % 2 == 1)
+			{
+				EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP1_X, Const.START_TEAM1_SHIP1_Y + (i * 50)), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), 1, i);
+			}
+			else
+			{
+				EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP1_X, Const.START_TEAM2_SHIP1_Y + (i * 50)), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), 2, i);
+			}
+		}
 	}
 
 //	private void initPlayers()

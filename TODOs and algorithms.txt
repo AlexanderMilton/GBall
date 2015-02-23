@@ -27,3 +27,34 @@ EACH FRAME:
 		Delta time (between timer start and finish) is the simulation time for next frame
 
 REITERATE.
+
+
+
+
+
+Remote Object Creation
+
+WHEN A PLAYER JOINS:
+
+	CLIENT (new):
+		Send join request
+		
+	SERVER:
+		Receive join request
+		Create new ClientConnection
+		Create new Ship
+		Send ship information to the joined player
+		Send entity information to the joined player
+		Send new entity information to the already existing players
+		
+	CLIENT (new):
+		Receive ship information
+		Create new ship and add at correct slot in personal Entity Array
+		Receive entity information
+		Create all other entities
+	
+	CLIENT (joined):
+		Receive information of new player
+		Create new ship and add at correct slot in personal Entity Array
+		
+		

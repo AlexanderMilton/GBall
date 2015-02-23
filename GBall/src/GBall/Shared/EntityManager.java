@@ -25,19 +25,20 @@ public class EntityManager
 
 	public void addShip(final Vector2D position, final Vector2D speed, final Vector2D direction, final int color, final int id)
 	{		
-		m_entities.add(new Ship(position, speed, direction, color, id));
+		// Add ship at the array slot corresponding to the new ships' ID
+		m_entities.add(id, new Ship(position, speed, direction, color, id));
 		Collections.sort(m_entities);
 	}
 	
 	public void addShip(Ship ship)
 	{
-		m_entities.add(ship);
+		m_entities.add(ship);		// Added ID-indexing, however unsure if this is correct
 		Collections.sort(m_entities);
 	}
 
 	public void addBall(final Vector2D position, final Vector2D speed)
 	{
-		m_entities.add(new Ball(position, speed));
+		m_entities.add(0, new Ball(position, speed));	// Ball is created at array index 0, because 0 is almost round, like a ball
 		Collections.sort(m_entities);
 	}
 
