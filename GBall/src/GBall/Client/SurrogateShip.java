@@ -166,7 +166,7 @@ public class SurrogateShip extends Ship
 		g.setFont(Const.SCORE_FONT);
 		g.setColor(Color.white);
 		int diff = (int) (m_surLastUpdate - m_lastUpdateTime);
-		g.drawString(new Integer(diff).toString(), 50, 50 + (m_ID * 10));
+		g.drawString(new Integer(diff).toString(), 50, 50 + (m_ID * 25));
 	}
 
 	@Override

@@ -181,11 +181,11 @@ public class World
 		{
 			if (i % 2 == 1)
 			{
-				EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP1_X, Const.START_TEAM1_SHIP1_Y + (i * 50)), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), 1, i);
+				EntityManager.getInstance().addShip(new SurrogateShip(new Vector2D(Const.START_TEAM1_SHIP1_X, Const.START_TEAM1_SHIP1_Y + (i * 50)), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), 0, i));
 			}
 			else
 			{
-				EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP1_X, Const.START_TEAM2_SHIP1_Y + (i * 50)), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), 2, i);
+				EntityManager.getInstance().addShip(new SurrogateShip(new Vector2D(Const.START_TEAM2_SHIP1_X, Const.START_TEAM2_SHIP1_Y + (i * 50)), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), 1, i));
 			}
 		}
 	}
