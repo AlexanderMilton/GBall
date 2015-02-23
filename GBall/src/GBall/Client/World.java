@@ -72,13 +72,14 @@ public class World
 			{
 				msg = m_listener.getMessage();
 			}
+
 			
 			// Create a ship using the new player data
 			ship = new SurrogateShip(msg.getVector("position"), msg.getVector("speed"), msg.getVector("direction"), msg.getInt("color"), msg.getInt("newID"));
-			EntityManager.getInstance().addShip(ship);
-			
 			// Create already existing entities
 			initEntities();
+			// Add the new player ship
+			EntityManager.getInstance().addShip(ship);
 			
 
 		} catch (IOException e)
@@ -129,7 +130,14 @@ public class World
 	private void updateState(MsgData msg)
 	{
 		int count = msg.getInt("EntityCount");
-		count = Math.min(count, EntityManager.getState().size()); // hack to avoid arrayindexoutofboundsexception
+		
+		// Check for new players
+		if (count > EntityManager.getState().size())
+		{
+			System.out.println("NEW ENTITY DETECTED. COUNT: " + count);
+			initNewEntity(count);	// TODO: Fix this to correct index out of bounds when updating without f***ing up the colours!
+		}
+		
 		for(int i = 0; i < count; i++)
 		{
 			EntityManager.getInstance().setState(i, new MsgData(msg.getJSONObj("entity" + i)));
@@ -151,7 +159,6 @@ public class World
 			m_socket.send(pack);
 		} catch (IOException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -175,20 +182,29 @@ public class World
 	
 	private void initEntities()
 	{
-		// Create a ball to be updated with messages
-//		EntityManager.getInstance().addBall(new Vector2D(Const.BALL_X, Const.BALL_Y), new Vector2D(0.0, 0.0));
-		
 		// Create players in arbitrary positions to be updated with messages
 		for(int i = 1; i < ship.getID(); i++)
 		{
 			if (i % 2 == 1)
 			{
-				EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP1_X, Const.START_TEAM1_SHIP1_Y + (i * 50)), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), 1, i);
+				EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP1_X, Const.START_TEAM1_SHIP1_Y + (i * 25)), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), 0, i);
 			}
 			else
 			{
-				EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP1_X, Const.START_TEAM2_SHIP1_Y + (i * 50)), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), 2, i);
+				EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP1_X, Const.START_TEAM2_SHIP1_Y + (i * 25)), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), 1, i);
 			}
+		}
+	}
+
+	private void initNewEntity(int count)
+	{
+		if (count % 2 == 1)
+		{
+			EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP1_X, Const.START_TEAM1_SHIP1_Y + (count * 25)), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), 0, count);
+		}
+		else
+		{
+			EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP1_X, Const.START_TEAM2_SHIP1_Y + (count * 25)), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), 1, count);
 		}
 	}
 

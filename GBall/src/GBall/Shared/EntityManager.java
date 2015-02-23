@@ -26,7 +26,7 @@ public class EntityManager
 	public void addShip(final Vector2D position, final Vector2D speed, final Vector2D direction, final int color, final int id)
 	{		
 		// Add ship at the array slot corresponding to the new ships' ID
-		m_entities.add(id, new Ship(position, speed, direction, color, id));
+		m_entities.add(new Ship(position, speed, direction, color, id));
 		Collections.sort(m_entities);
 	}
 	
