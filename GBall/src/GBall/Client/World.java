@@ -50,7 +50,7 @@ public class World
 	{
 		m_inputListener = new InputListener(new KeyConfig(KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_UP));
 //		initPlayers();
-		EntityManager.getInstance().addBall(new Vector2D(Const.BALL_X, Const.BALL_Y), new Vector2D());
+		EntityManager.getInstance().addBall(new SurrogateBall(new Vector2D(Const.BALL_X, Const.BALL_Y), new Vector2D()));
 
 		// Marshal the state
 		try

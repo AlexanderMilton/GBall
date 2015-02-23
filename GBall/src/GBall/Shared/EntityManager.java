@@ -40,6 +40,12 @@ public class EntityManager
 		m_entities.add(new Ball(position, speed));
 		Collections.sort(m_entities);
 	}
+	
+	public void addBall(Ball ball)
+	{
+		m_entities.add(ball);
+		Collections.sort(m_entities);
+	}
 
 	public void updatePositions()
 	{
