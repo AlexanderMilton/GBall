@@ -33,6 +33,7 @@ public class Listener extends Thread
 //				System.out.println(jstr);
 				MsgData msg = new MsgData(jstr, packet.getAddress(), packet.getPort());
 				
+				
 //				ByteArrayInputStream bais = new ByteArrayInputStream(buf);
 //				ObjectInputStream ois = new ObjectInputStream(bais);
 //				MsgData msg = (MsgData) ois.readObject();

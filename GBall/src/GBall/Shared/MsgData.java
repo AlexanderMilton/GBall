@@ -32,9 +32,15 @@ public class MsgData implements Comparable<MsgData>
 	public final InetAddress m_address;
 	public final int m_port;
 	
+	public static long m_offset = 0;
 	private void stamp()
 	{
-		obj.put("timestamp", System.currentTimeMillis());
+		obj.put("timestamp", System.currentTimeMillis() + m_offset);
+	}
+	
+	private void applyOffset()
+	{
+		obj.put("timestamp", getTimestamp() - m_offset);
 	}
 	
 	public MsgData()
@@ -49,6 +55,7 @@ public class MsgData implements Comparable<MsgData>
 		obj = o;
 		m_address = null;
 		m_port = -1;
+		applyOffset();
 	}
 	
 	public MsgData(String JSONString, InetAddress address, int port) throws ParseException
@@ -58,7 +65,8 @@ public class MsgData implements Comparable<MsgData>
 		
 		m_address = address;
 		m_port = port;
-		stamp();
+		applyOffset();
+//		stamp();
 	}
 	
 	public void setPrevMessage(JSONObject pObj)

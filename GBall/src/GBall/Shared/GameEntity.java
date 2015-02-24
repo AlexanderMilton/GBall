@@ -189,6 +189,7 @@ public abstract class GameEntity implements Comparable<GameEntity>
 			setRotation(msg.getInt("rotation"));
 			m_acceleration = msg.getDouble("acceleration");
 			m_lastUpdateTime = msg.getTimestamp();
+			System.out.println(m_lastUpdateTime + "\n" + System.currentTimeMillis());
 		} catch(NullPointerException e)
 		{
 

@@ -18,8 +18,9 @@ import GBall.Shared.Vector2D;
 public class World
 {
 
-	public static final String SERVERIP = "127.0.0.1"; // 'Within' the emulator!
+	public static final String SERVERIP = "192.168.0.111"; // 'Within' the emulator!
 	public static final int SERVERPORT = 4444;
+	public static InetAddress SERVERADDRESS;
 
 	private static class WorldSingletonHolder
 	{
@@ -38,18 +39,18 @@ public class World
 
 	private final GameWindow m_gameWindow = new GameWindow("Client");
 	private InputListener m_inputListener;
-	
+
 	private Ship ship;
 
 	private World()
 	{
-		
+
 	}
 
 	public void process()
 	{
 		m_inputListener = new InputListener(new KeyConfig(KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_UP));
-//		initPlayers();
+		//		initPlayers();
 		EntityManager.getInstance().addBall(new SurrogateBall(new Vector2D(Const.BALL_X, Const.BALL_Y), new Vector2D()));
 
 		// Marshal the state
@@ -58,14 +59,14 @@ public class World
 			m_socket = new DatagramSocket();
 			m_listener = new Listener(m_socket);
 			m_listener.start();
-			InetAddress m_serverAddress = InetAddress.getByName("localhost");
-			
+			SERVERADDRESS = InetAddress.getByName(SERVERIP);
+
 			// Send join request
 			MsgData msg = new MsgData();
 			byte[] buf = msg.toString().getBytes();
-			DatagramPacket pack = new DatagramPacket(buf, buf.length, m_serverAddress, SERVERPORT);
+			DatagramPacket pack = new DatagramPacket(buf, buf.length, SERVERADDRESS, SERVERPORT);
 			m_socket.send(pack);
-			
+
 			msg = null;
 			// Receive new player data
 			while(msg == null)
@@ -73,21 +74,27 @@ public class World
 				msg = m_listener.getMessage();
 			}
 
-			
+			long timeDiff = msg.getTimestamp() - System.currentTimeMillis();
+			MsgData.m_offset = timeDiff;
+			System.out.println(msg.getTimestamp() + "\n"
+					+ System.currentTimeMillis() + " " + timeDiff + "\n"
+					+ new MsgData().getTimestamp());
+
+
 			// Create a ship using the new player data
 			ship = new SurrogateShip(msg.getVector("position"), msg.getVector("speed"), msg.getVector("direction"), msg.getInt("color"), msg.getInt("newID"));
 			// Create already existing entities
 			initEntities();
 			// Add the new player ship
 			EntityManager.getInstance().addShip(ship);
-			
+
 
 		} catch (IOException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-//		MsgData prevMsg = null;
+		//		MsgData prevMsg = null;
 		MsgData msg;
 		while (true)
 		{
@@ -95,10 +102,10 @@ public class World
 			{
 				if((msg = m_listener.getMessage()) != null)
 				{
-//					System.out.println(msg.debugInfo());
+					//					System.out.println(msg.debugInfo());
 					updateState(msg);
 				}
-//				System.out.println(System.currentTimeMillis());
+				//				System.out.println(System.currentTimeMillis());
 				/*LinkedList<GameEntity> entities = EntityManager.getState();
 				GameEntity ge;
 				for(Iterator<GameEntity> itr = entities.iterator(); itr.hasNext();)
@@ -113,12 +120,12 @@ public class World
 				msg.setParameter("rotation", m_inputListener.getRotation());
 				msg.setParameter("acceleration", m_inputListener.getAcceleration());
 				//msg.m_prevMsg = prevMsg;
-//				System.out.println(EntityManager.getState().get(1).getPosition().toJSONString());
+				//				System.out.println(EntityManager.getState().get(1).getPosition().toJSONString());
 				sendMsg(msg);
 				ship.setAcceleration(m_inputListener.getAcceleration());
 				ship.setRotation(m_inputListener.getRotation());
 				//msg.m_prevMsg = null;
-//				prevMsg = msg;
+				//				prevMsg = msg;
 				EntityManager.getInstance().updatePositions();
 				EntityManager.getInstance().checkBorderCollisions(Const.DISPLAY_WIDTH, Const.DISPLAY_HEIGHT, false);
 				EntityManager.getInstance().checkShipCollisions();
@@ -126,18 +133,18 @@ public class World
 			}
 		}
 	}
-	
+
 	private void updateState(MsgData msg)
 	{
 		int count = msg.getInt("EntityCount");
-		
+
 		// Check for new players
 		if (count > EntityManager.getState().size())
 		{
 			System.out.println("NEW ENTITY DETECTED. COUNT: " + count);
 			initNewEntity(count-1);
 		}
-		
+
 		for(int i = 0; i < count; i++)
 		{
 			EntityManager.getInstance().setState(i, new MsgData(msg.getJSONObj("entity" + i)));
@@ -149,13 +156,9 @@ public class World
 	{
 		try
 		{
-			InetAddress m_serverAddress;
-
-			m_serverAddress = InetAddress.getByName("localhost");
-
 			byte[] buf = msg.toString().getBytes();
 
-			DatagramPacket pack = new DatagramPacket(buf, buf.length, m_serverAddress, SERVERPORT);
+			DatagramPacket pack = new DatagramPacket(buf, buf.length, SERVERADDRESS, SERVERPORT);
 			m_socket.send(pack);
 		} catch (IOException e)
 		{
@@ -179,7 +182,7 @@ public class World
 		}
 		return rv;
 	}
-	
+
 	private void initEntities()
 	{
 		// Create players in arbitrary positions to be updated with messages
@@ -199,33 +202,26 @@ public class World
 
 	private void initNewEntity(int count)
 	{
-		if (count % 2 == 0)
-		{
-			EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP1_X, Const.START_TEAM1_SHIP1_Y + (count * 50)), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), 0, count);
-		}
-		else
-		{
-			EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP1_X, Const.START_TEAM2_SHIP1_Y + (count * 50)), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), 1, count);
-		}
+		EntityManager.getInstance().addShip(new SurrogateShip(new Vector2D(Const.START_TEAM1_SHIP1_X, Const.START_TEAM1_SHIP1_Y + (count * 50)), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), count % 2, count));
 	}
 
-//	private void initPlayers()
-//	{
-//		// The order in which the entities are added are important as the index corresponds to their ID:s
-//		
-//		// Ball
-//		EntityManager.getInstance().addBall(new Vector2D(Const.BALL_X, Const.BALL_Y), new Vector2D(0.0, 0.0));
-//		
-//		// Team 1
-//		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP1_X, Const.START_TEAM1_SHIP1_Y), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), Const.TEAM1_COLOR, Const.SHIP1_ID);
-//
-//		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP2_X, Const.START_TEAM1_SHIP2_Y), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), Const.TEAM1_COLOR, Const.SHIP2_ID);
-//
-//		// Team 2
-//		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP1_X, Const.START_TEAM2_SHIP1_Y), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), Const.TEAM2_COLOR, Const.SHIP3_ID);
-//
-//		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP2_X, Const.START_TEAM2_SHIP2_Y), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), Const.TEAM2_COLOR, Const.SHIP4_ID);
-//	}
+	//	private void initPlayers()
+	//	{
+	//		// The order in which the entities are added are important as the index corresponds to their ID:s
+	//		
+	//		// Ball
+	//		EntityManager.getInstance().addBall(new Vector2D(Const.BALL_X, Const.BALL_Y), new Vector2D(0.0, 0.0));
+	//		
+	//		// Team 1
+	//		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP1_X, Const.START_TEAM1_SHIP1_Y), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), Const.TEAM1_COLOR, Const.SHIP1_ID);
+	//
+	//		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP2_X, Const.START_TEAM1_SHIP2_Y), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), Const.TEAM1_COLOR, Const.SHIP2_ID);
+	//
+	//		// Team 2
+	//		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP1_X, Const.START_TEAM2_SHIP1_Y), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), Const.TEAM2_COLOR, Const.SHIP3_ID);
+	//
+	//		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP2_X, Const.START_TEAM2_SHIP2_Y), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), Const.TEAM2_COLOR, Const.SHIP4_ID);
+	//	}
 
 	public double getActualFps()
 	{

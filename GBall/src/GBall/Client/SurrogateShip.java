@@ -48,7 +48,7 @@ public class SurrogateShip extends Ship
 	@Override
 	public void move()
 	{
-		Vector2D prevPos = new Vector2D(m_surPosition);
+//		Vector2D prevPos = new Vector2D(m_surPosition);
 		if (m_surRotation != 0)
 		{
 			m_surDirection.rotate(m_surRotation * Const.SHIP_ROTATION);
@@ -70,7 +70,7 @@ public class SurrogateShip extends Ship
 
 		checkRealState();
 
-		prevPos.subtract(m_surPosition);
+//		prevPos.subtract(m_surPosition);
 		// System.out.println(prevPos + " " + m_surAcceleration + " " +
 		// m_surRotation + " : " + delta);
 	}
@@ -108,7 +108,6 @@ public class SurrogateShip extends Ship
 				m_surPosition.setY(super.getPosition().getY());
 				changed = true;
 			}
-			System.out.println(m_surDirection.dotProduct(super.getDirection()));
 			if (m_surDirection.dotProduct(super.getDirection()) > 0.9)
 			{
 				m_surDirection.set(super.getDirection());
@@ -116,6 +115,7 @@ public class SurrogateShip extends Ship
 			{
 				m_surDirection.lerp(super.getDirection(), f);
 			}
+//			System.out.println(m_surDirection.dotProduct(super.getDirection()));
 		}
 
 		/*
@@ -176,7 +176,7 @@ public class SurrogateShip extends Ship
 		checkRealState();
 		if (!m_surPosition.equals(super.getPosition()))
 		{
-			System.out.println(m_surPosition + " " + m_surDirection + " " + m_surSpeed);
+//			System.out.println(m_surPosition + " " + m_surDirection + " " + m_surSpeed);
 		}
 	}
 }
