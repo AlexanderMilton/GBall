@@ -176,7 +176,7 @@ public abstract class GameEntity implements Comparable<GameEntity>
 	{
 		try
 		{
-			if(msg == null || msg.getInt("ID") != m_ID)
+			if(msg == null || msg.getInt("ID") != m_ID || msg.getTimestamp() < m_lastUpdateTime)
 			{
 				System.out.println("Update failed: " + msg + " " + msg.getInt("ID") + " " + m_ID);
 				return;
@@ -189,7 +189,7 @@ public abstract class GameEntity implements Comparable<GameEntity>
 			setRotation(msg.getInt("rotation"));
 			m_acceleration = msg.getDouble("acceleration");
 			m_lastUpdateTime = msg.getTimestamp();
-			System.out.println(m_lastUpdateTime + "\n" + System.currentTimeMillis());
+//			System.out.println(m_lastUpdateTime + "\n" + System.currentTimeMillis());
 		} catch(NullPointerException e)
 		{
 

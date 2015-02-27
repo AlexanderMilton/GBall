@@ -18,8 +18,9 @@ import GBall.Shared.Vector2D;
 public class World
 {
 
-	public static final String SERVERIP = "192.168.0.111"; // 'Within' the emulator!
-	public static final int SERVERPORT = 4444;
+//	public static String SERVERIP = "193.10.180.204"; // 'Within' the emulator!
+	public static String SERVERIP = "127.0.0.1";
+	public static final int SERVERPORT = 25001;
 	public static InetAddress SERVERADDRESS;
 
 	private static class WorldSingletonHolder
@@ -130,6 +131,7 @@ public class World
 				EntityManager.getInstance().checkBorderCollisions(Const.DISPLAY_WIDTH, Const.DISPLAY_HEIGHT, false);
 				EntityManager.getInstance().checkShipCollisions();
 				m_gameWindow.repaint();
+//				System.out.println(System.currentTimeMillis());
 			}
 		}
 	}

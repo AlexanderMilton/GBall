@@ -159,15 +159,15 @@ public class SurrogateShip extends Ship
 		m_surSpeed.setY(-m_surSpeed.getY());
 	}
 
-	@Override
-	public void render(Graphics g)
-	{
-		super.render(g);
-		g.setFont(Const.SCORE_FONT);
-		g.setColor(Color.white);
-		int diff = (int) (m_surLastUpdate - m_lastUpdateTime);
-		g.drawString(new Integer(diff).toString(), 50, 50 + (m_ID * 25));
-	}
+//	@Override
+//	public void render(Graphics g)
+//	{
+//		super.render(g);
+//		g.setFont(Const.SCORE_FONT);
+//		g.setColor(Color.white);
+//		int diff = (int) (m_surLastUpdate - m_lastUpdateTime);
+//		g.drawString(new Integer(diff).toString(), 50, 50 + (m_ID * 25));
+//	}
 
 	@Override
 	public void setState(MsgData msg)

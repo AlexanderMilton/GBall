@@ -20,7 +20,7 @@ public class World
 {
 
 	public static final String SERVERIP = "127.0.0.1"; // 'Within' the emulator!
-	public static final int SERVERPORT = 4444;
+	public static final int SERVERPORT = 25001;
 
 	private static class WorldSingletonHolder
 	{
@@ -122,7 +122,8 @@ public class World
 				{
 					diffTimes = diffTimes + String.format("%04d ", new Integer((int)(currTime - itr.next().m_lastUpdate))); 
 				}
-				System.out.println(diffTimes);
+//				System.out.println(diffTimes);
+//				System.out.println(System.currentTimeMillis());
 			}
 		}
 	}
