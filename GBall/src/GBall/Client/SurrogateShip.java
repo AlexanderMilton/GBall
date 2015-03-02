@@ -29,7 +29,7 @@ public class SurrogateShip extends Ship
 	@Override
 	public void setRotation(int r)
 	{
-		m_surRotation = r;
+		m_surRotation = (int)Math.signum(r);
 	}
 
 	@Override
