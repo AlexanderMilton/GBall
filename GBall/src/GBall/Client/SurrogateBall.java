@@ -49,27 +49,10 @@ public class SurrogateBall extends Ball
 		   deltaY > Const.SURROGATE_MAX_DIFFERENCE)
 		{
 			m_surPosition.set(super.getPosition());
-//			m_surDirection.set(super.getDirection());
-		}
-		/*if(Math.abs(m_surPosition.getX() - super.getPosition().getX()) > Const.SURROGATE_MAX_DIFFERENCE)
-		{
-			m_surPosition.setX(super.getPosition().getX());
-		}
-		if(Math.abs(m_surPosition.getY() - super.getPosition().getY()) > Const.SURROGATE_MAX_DIFFERENCE)
-		{
-			m_surPosition.setY(super.getPosition().getY());
 		}
 		
-		if(m_surDirection.dotProduct(super.getDirection()) < 0.5)
-		{
-			m_surDirection.set(super.getDirection());
-		}*/
 		
 		m_surPosition.lerp(super.getPosition(), f);
 		m_surSpeed.lerp(super.getSpeed(), f);
-
-		
-//		System.out.println(m_surSpeed.dotProduct(super.getSpeed()) + "\n"
-//				+ m_surSpeed + " " + super.getSpeed()); 
 	}
 }
