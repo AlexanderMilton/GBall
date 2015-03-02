@@ -16,19 +16,6 @@ public class MsgData implements Comparable<MsgData>
 	 */
 	private JSONObject obj = new JSONObject();
 
-//	public Vector2D m_position;
-//	public Vector2D m_initialPosition;
-//	public Vector2D m_initialDirection;
-//	public Vector2D m_speed;
-//	public Vector2D m_direction; // Should always be unit vector; determines the
-//									// object's facing
-//	
-//	public int m_rotation;
-//	public double m_acceleration;
-//	public long m_timestamp;
-//	
-//	public MsgData m_prevMsg = null;
-
 	public final InetAddress m_address;
 	public final int m_port;
 	
@@ -106,7 +93,6 @@ public class MsgData implements Comparable<MsgData>
 			return (JSONObject)new JSONParser().parse((String) obj.get(key));
 		} catch (ParseException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -132,18 +118,6 @@ public class MsgData implements Comparable<MsgData>
 	{
 		return (long) obj.get("timestamp");
 	}
-	
-
-//	public MsgData(Vector2D position, Vector2D initialPosition, Vector2D initialDirection, Vector2D speed, Vector2D direction)
-//	{
-//
-//		m_position = position;
-//		m_initialPosition = initialPosition;
-//		m_initialDirection = initialDirection;
-//		m_speed = speed;
-//		m_direction = direction;
-//		m_timestamp = System.currentTimeMillis();
-//	}
 	
 	@Override
 	public int compareTo(MsgData o)
@@ -171,24 +145,6 @@ public class MsgData implements Comparable<MsgData>
 	@Override
 	public String toString()
 	{
-//		String string = m_position + ", "
-//						+ m_initialPosition + ", "
-//						+ m_initialDirection + ", "
-//						+ m_speed + ", "
-//						+ m_direction + ", "
-//						+ m_rotation + ", "
-//						+ m_acceleration + ", "
-//						+ m_timestamp + " : ";
-//		if(m_prevMsg != null)
-//		{
-//			string += m_prevMsg;
-//		}
-//		else
-//		{
-//			string += "null";
-//		}
-//		return string;
-		
 		return obj.toJSONString();
 	}
 	
