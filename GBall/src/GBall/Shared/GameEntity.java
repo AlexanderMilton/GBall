@@ -155,7 +155,12 @@ public abstract class GameEntity implements Comparable<GameEntity>
 
 	public void displace(final Vector2D displacement)
 	{
-		m_position.add(displacement);
+		displace(displacement, m_position);
+	}
+	
+	protected void displace(final Vector2D displacement, Vector2D position)
+	{
+		position.add(displacement);
 	}
 
 	public MsgData getMsgData()

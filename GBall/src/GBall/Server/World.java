@@ -78,10 +78,10 @@ public class World extends Thread
 		MsgData msg;
 		
 		
-		int count = 0;
+//		int count = 0;
 		while (true)
 		{
-			count++;
+//			count++;
 			if ((msg = m_listener.getMessage()) != null)
 			{
 				//System.out.println(msg.debugInfo());
@@ -113,8 +113,8 @@ public class World extends Thread
 			}
 			if (newFrame())
 			{
-				System.out.println(count);
-				count = 0;
+//				System.out.println(count);
+//				count = 0;
 				EntityManager.getInstance().updatePositions();
 				EntityManager.getInstance().checkBorderCollisions(Const.DISPLAY_WIDTH, Const.DISPLAY_HEIGHT, true);
 				EntityManager.getInstance().checkShipCollisions();
