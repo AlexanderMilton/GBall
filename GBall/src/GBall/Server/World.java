@@ -16,7 +16,7 @@ import GBall.Shared.MsgData;
 import GBall.Shared.ScoreKeeper;
 import GBall.Shared.Vector2D;
 
-public class World
+public class World extends Thread
 {
 
 	public static final String SERVERIP = "127.0.0.1"; // 'Within' the emulator!
@@ -77,8 +77,11 @@ public class World
 		
 		MsgData msg;
 		
+		
+		int count = 0;
 		while (true)
 		{
+			count++;
 			if ((msg = m_listener.getMessage()) != null)
 			{
 				//System.out.println(msg.debugInfo());
@@ -110,6 +113,8 @@ public class World
 			}
 			if (newFrame())
 			{
+				System.out.println(count);
+				count = 0;
 				EntityManager.getInstance().updatePositions();
 				EntityManager.getInstance().checkBorderCollisions(Const.DISPLAY_WIDTH, Const.DISPLAY_HEIGHT, true);
 				EntityManager.getInstance().checkShipCollisions();
@@ -124,6 +129,13 @@ public class World
 				}
 //				System.out.println(diffTimes);
 //				System.out.println(System.currentTimeMillis());
+				try
+				{
+					sleep(Const.FRAME_WAIT);
+				} catch(InterruptedException e)
+				{
+					//do nothing
+				}
 			}
 		}
 	}
@@ -157,7 +169,7 @@ public class World
 	{
 		double currentTime = System.currentTimeMillis();
 		double delta = currentTime - m_lastTime;
-		boolean rv = (delta > (Const.FRAME_INCREMENT * 2));
+		boolean rv = (delta > (Const.FRAME_INCREMENT));
 		if (rv)
 		{
 			m_lastTime += Const.FRAME_INCREMENT;

@@ -8,6 +8,7 @@ public final class Const
 	// World-related constants
 	public final static double TARGET_FPS = 50;
 	public final static double FRAME_INCREMENT = 1000 / TARGET_FPS;
+	public final static long FRAME_WAIT = (long)(FRAME_INCREMENT * 0.8f);
 	public final static String APP_NAME = "Geometry Ball Tournament 2014";
 	public final static int DISPLAY_WIDTH = 960;
 	public final static int DISPLAY_HEIGHT = 540;
