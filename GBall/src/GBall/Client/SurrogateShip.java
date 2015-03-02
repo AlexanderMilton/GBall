@@ -1,8 +1,5 @@
 package GBall.Client;
 
-import java.awt.Color;
-import java.awt.Graphics;
-
 import GBall.Shared.Const;
 import GBall.Shared.MsgData;
 import GBall.Shared.Ship;
