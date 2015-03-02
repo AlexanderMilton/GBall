@@ -18,6 +18,36 @@ public class SurrogateBall extends Ball
 		m_surSpeed = new Vector2D(speed);
 	}
 	
+	public Vector2D getPosition()
+	{
+		return m_surPosition;
+	}
+	
+	public Vector2D getSpeed()
+	{
+		return m_surSpeed;
+	}
+	
+	public void changeSpeed(Vector2D delta)
+	{
+		super.changeSpeed(delta, m_surSpeed);
+	}
+	
+	public void displace(Vector2D displacement)
+	{
+		super.displace(displacement, m_surPosition);
+	}
+	
+	public void deflectY()
+	{
+		m_surSpeed.setY(-m_surSpeed.getX());
+	}
+	
+	public boolean givesPoints()
+	{
+		return false;
+	}
+		
 	@Override
 	public void move()
 	{

@@ -30,7 +30,8 @@ public class Ship extends GameEntity// implements KeyListener
 	@Override
 	public void setRotation(int r)
 	{
-		rotation = r;
+		
+		rotation = (int)Math.signum(r); 
 	}
 	
 	@Override

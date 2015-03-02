@@ -26,7 +26,7 @@ public class SurrogateShip extends Ship
 	@Override
 	public void setRotation(int r)
 	{
-		m_surRotation = r;
+		m_surRotation = (int)Math.signum(r);
 	}
 
 	@Override
@@ -154,6 +154,21 @@ public class SurrogateShip extends Ship
 	public void deflectY()
 	{
 		m_surSpeed.setY(-m_surSpeed.getY());
+	}
+	
+	public void displace(Vector2D v)
+	{
+		super.displace(v, m_surPosition);
+	}
+	
+	public void changeSpeed(Vector2D delta)
+	{
+		super.changeSpeed(delta, m_surSpeed);
+	}
+	
+	public Vector2D getSpeed()
+	{
+		return m_surSpeed;
 	}
 
 //	@Override

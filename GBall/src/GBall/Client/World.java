@@ -15,7 +15,7 @@ import GBall.Shared.ScoreKeeper;
 import GBall.Shared.Ship;
 import GBall.Shared.Vector2D;
 
-public class World
+public class World extends Thread
 {
 
 //	public static String SERVERIP = "193.10.180.204"; // 'Within' the emulator!
@@ -132,6 +132,13 @@ public class World
 				EntityManager.getInstance().checkShipCollisions();
 				m_gameWindow.repaint();
 //				System.out.println(System.currentTimeMillis());
+				try
+				{
+					sleep(Const.FRAME_WAIT);
+				} catch(InterruptedException e)
+				{
+					//Do nothing
+				}
 			}
 		}
 	}
