@@ -32,7 +32,7 @@ public class EntityManager
 	
 	public void addShip(Ship ship)
 	{
-		m_entities.add(ship);		// Added ID-indexing, however unsure if this is correct
+		m_entities.add(ship);
 		Collections.sort(m_entities);
 	}
 
@@ -169,7 +169,6 @@ public class EntityManager
 
 	public static LinkedList<GameEntity> getState()
 	{
-
 		return m_entities;
 	}
 	
@@ -181,6 +180,7 @@ public class EntityManager
 
 	public void setState(int index, MsgData msg)
 	{
+		// update specified entity with server state
 		m_entities.get(index).setState(msg);
 	}
 	

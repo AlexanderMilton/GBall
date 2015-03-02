@@ -164,7 +164,8 @@ public class Vector2D implements Serializable, JSONAware
 	{
 		return "(" + m_x + "," + m_y + ")";
 	}
-
+	
+	// Serialize this object to a JSON string to easily send over network
 	@Override
 	public String toJSONString()
 	{

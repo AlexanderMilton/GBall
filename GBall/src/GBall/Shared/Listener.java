@@ -7,10 +7,12 @@ import java.util.concurrent.PriorityBlockingQueue;
 
 import org.json.simple.parser.ParseException;
 
+//Listens for messages and stores them sorted by timestamp.
 public class Listener extends Thread
 {
 	private final DatagramSocket m_socket;
 	
+	// sorts all messages according to timestamp, so the first message in the queue is the oldest
 	protected PriorityBlockingQueue<MsgData> m_messages = new PriorityBlockingQueue<MsgData>();
 	
 	private boolean m_isRunning = true;
@@ -28,17 +30,12 @@ public class Listener extends Thread
 			DatagramPacket packet = new DatagramPacket(buf, buf.length);
 			try
 			{
+				// receive a json string in a datagrampacket and rebuild a MsgData instance from it.
 				m_socket.receive(packet);
 				String jstr = new String(packet.getData(), packet.getOffset(), packet .getLength());
-//				System.out.println(jstr);
 				MsgData msg = new MsgData(jstr, packet.getAddress(), packet.getPort());
 				
-				
-//				ByteArrayInputStream bais = new ByteArrayInputStream(buf);
-//				ObjectInputStream ois = new ObjectInputStream(bais);
-//				MsgData msg = (MsgData) ois.readObject();
 				add(msg);
-//				System.out.println("Message count: " + m_messages.size());
 			} catch (IOException | ParseException e)
 			{
 				System.err.println("Failed to parse string");

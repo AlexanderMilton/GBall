@@ -13,7 +13,6 @@ public class Ship extends GameEntity// implements KeyListener
 	
 	private int rotation = 0; // Set to 1 when rotating clockwise, -1 when
 								// rotating counterclockwise
-	private boolean braking = false;
 
 	public Ship(final Vector2D position, final Vector2D speed, final Vector2D direction, final int col, final int id)
 	{
@@ -30,7 +29,7 @@ public class Ship extends GameEntity// implements KeyListener
 	@Override
 	public void setRotation(int r)
 	{
-		
+		// set rotation to sign only to constain the value to 0, 1, or -1
 		rotation = (int)Math.signum(r); 
 	}
 	
@@ -47,11 +46,6 @@ public class Ship extends GameEntity// implements KeyListener
 		{
 			rotate(rotation * Const.SHIP_ROTATION);
 			scaleSpeed(Const.SHIP_TURN_BRAKE_SCALE);
-		}
-		if (braking)
-		{
-			scaleSpeed(Const.SHIP_BRAKE_SCALE);
-			setAcceleration(0);
 		}
 		super.move();
 	}
@@ -78,6 +72,7 @@ public class Ship extends GameEntity// implements KeyListener
 		return Const.SHIP_RADIUS;
 	}
 
+	// returns the entity id which is used to discern which entity an update message is for
 	public int getID()
 	{
 		return m_ID;

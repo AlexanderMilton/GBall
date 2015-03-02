@@ -3,9 +3,6 @@ package GBall.Shared;
 
 public abstract class GameEntity implements Comparable<GameEntity>
 {
-	/**
-	 * 
-	 */
 	private final Vector2D m_position;
 	private final Vector2D m_initialPosition;
 	private final Vector2D m_initialDirection;
@@ -44,7 +41,7 @@ public abstract class GameEntity implements Comparable<GameEntity>
 
 	public void setRotation(int rotation)
 	{
-		// do nothing
+		// do nothing, here to enable setting ship rotation via gameentity reference
 	}
 
 	public void setAcceleration(double a)
@@ -165,6 +162,7 @@ public abstract class GameEntity implements Comparable<GameEntity>
 
 	public MsgData getMsgData()
 	{
+		// pack all changing data in the entity into a message
 		MsgData msg = new MsgData();
 		msg.setParameter("ID", m_ID);
 		msg.setParameter("position", m_position);
@@ -172,11 +170,10 @@ public abstract class GameEntity implements Comparable<GameEntity>
 		msg.setParameter("speed", m_speed);
 		msg.setParameter("rotation", getRotation());
 		msg.setParameter("acceleration", m_acceleration);
-		//return new MsgData(m_position, m_initialPosition, m_initialDirection, m_speed, m_direction);
-		//		System.out.println(msg.toString());
 		return msg;
 	}
 
+	// updates the entity with state info from the server
 	public void setState(MsgData msg)
 	{
 		try
@@ -186,21 +183,19 @@ public abstract class GameEntity implements Comparable<GameEntity>
 				System.out.println("Update failed: " + msg + " " + msg.getInt("ID") + " " + m_ID);
 				return;
 			}
-//			System.out.println("Update entity: " + m_ID);
-//			System.out.println(msg.getVector("position"));
 			m_position.set(msg.getVector("position"));
 			m_direction.set(msg.getVector("direction"));
 			m_speed.set(msg.getVector("speed"));
 			setRotation(msg.getInt("rotation"));
 			m_acceleration = msg.getDouble("acceleration");
 			m_lastUpdateTime = msg.getTimestamp();
-//			System.out.println(m_lastUpdateTime + "\n" + System.currentTimeMillis());
 		} catch(NullPointerException e)
 		{
 
 		}
 	}
 
+	// sort entity based on ID
 	public int compareTo(GameEntity ge)
 	{
 		if(ge == null)

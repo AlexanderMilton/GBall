@@ -6,6 +6,7 @@ import java.awt.event.KeyListener;
 import GBall.Shared.Const;
 import GBall.Shared.KeyConfig;
 
+// listens for and interprets keyboard input
 public class InputListener implements KeyListener
 {
 	private final KeyConfig m_keyConfig;

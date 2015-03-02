@@ -4,6 +4,7 @@ import GBall.Shared.Ball;
 import GBall.Shared.Const;
 import GBall.Shared.Vector2D;
 
+// used for client side prediction about ball movements
 public class SurrogateBall extends Ball
 {
 	// surrogate position, speed, direction etc.
@@ -17,6 +18,8 @@ public class SurrogateBall extends Ball
 		m_surPosition = new Vector2D(position);
 		m_surSpeed = new Vector2D(speed);
 	}
+	
+	// multiple overrides to make collsions affect the surrogate instead of the entity
 	
 	public Vector2D getPosition()
 	{
@@ -62,19 +65,23 @@ public class SurrogateBall extends Ball
 		checkRealState();
 	}
 	
+	// checks the surrogates position against the ships real position that is updated from server.
 	private void checkRealState()
 	{
 		long stateAge = System.currentTimeMillis() - m_lastUpdateTime;
 		float f = 0.3f;
 		if(stateAge > 0)
 		{
+			// base the impact the "real" position etc. has on how old the data is
 			f = 10.0f / (float)stateAge;
-//			System.out.println(f + " " + stateDiff + " " + stateAge);
 		}
-		
+
+		// differnce between surrogate position and "real" position
 		double deltaX = Math.abs(m_surPosition.getX() - super.getPosition().getX());
 		double deltaY = Math.abs(m_surPosition.getY() - super.getPosition().getY());
 		
+
+		// if difference is too big, just warp the ship.
 		if(deltaX > Const.SURROGATE_MAX_DIFFERENCE ||
 		   deltaY > Const.SURROGATE_MAX_DIFFERENCE)
 		{

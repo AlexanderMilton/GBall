@@ -1,6 +1,5 @@
 package GBall.Server;
 
-import java.awt.event.*;
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.util.ArrayList;
@@ -16,10 +15,9 @@ import GBall.Shared.MsgData;
 import GBall.Shared.ScoreKeeper;
 import GBall.Shared.Vector2D;
 
+// thread only to enable sleeping
 public class World extends Thread
 {
-
-	public static final String SERVERIP = "127.0.0.1"; // 'Within' the emulator!
 	public static final int SERVERPORT = 25001;
 
 	private static class WorldSingletonHolder
@@ -39,7 +37,6 @@ public class World extends Thread
 	private Listener m_listener;
 	private ArrayList<ClientConnection> m_clients = new ArrayList<ClientConnection>();
 
-//	private GameWindow m_gameWindow = new GameWindow("Server");
 
 	private World()
 	{
@@ -50,41 +47,25 @@ public class World extends Thread
 	{
 		initBall();		// Ball must be initiated first
 
-		// Marshal the state
 		try
 		{
-			// ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			// create a new socket and start the listener thread
 			m_socket = new DatagramSocket(SERVERPORT);
 			m_listener = new Listener(m_socket);
 			m_listener.start();
-
-			// ObjectOutputStream oos = new ObjectOutputStream(baos);
-			// oos.writeObject(new MsgData());
-			// oos.flush();
-			//
-			// byte[] buf = new byte[1024];
-			//
-			// buf = baos.toByteArray();
-			//
-			// DatagramPacket pack = new DatagramPacket(buf, buf.length,
-			// m_serverAddress, SERVERPORT);
-			// m_socket.send(pack);
-
 		} catch (IOException e)
 		{
 			e.printStackTrace();
 		}
 		
-		MsgData msg;
 		
-		
-//		int count = 0;
+		MsgData msg; // declared here to avoid allocating and deallocating as much memory each frame		
 		while (true)
 		{
-//			count++;
+			// check if a message has arrived
 			if ((msg = m_listener.getMessage()) != null)
 			{
-				//System.out.println(msg.debugInfo());
+				// check if the message came from an already connected client
 				ClientConnection c = findClient(msg);
 				if (c != null)
 				{
@@ -92,7 +73,7 @@ public class World extends Thread
 					{
 						// Get player ID
 						int shipID = msg.getInt("ID");
-						
+						// set client acceleration and rotation, and update the client's update-time
 						EntityManager.getInstance().setAcceleration(shipID, msg.getDouble("acceleration"));
 						EntityManager.getInstance().setRotation(shipID, msg.getInt("rotation"));
 						c.m_lastUpdate = msg.getTimestamp();
@@ -102,7 +83,7 @@ public class World extends Thread
 					}
 				} else
 				{
-					// A player has requested to join the game
+					// A new player has requested to join the game
 					ClientConnection newCC = new ClientConnection(msg.m_address, msg.m_port, m_socket); 
 					addClient(newCC);
 					
@@ -111,26 +92,22 @@ public class World extends Thread
 					newCC.sendMessage(shipInfo.toString());
 				}
 			}
+			// check if enough time has passed since last frame
 			if (newFrame())
 			{
-//				System.out.println(count);
-//				count = 0;
+				// move all entities and perform collision checks/handling
 				EntityManager.getInstance().updatePositions();
 				EntityManager.getInstance().checkBorderCollisions(Const.DISPLAY_WIDTH, Const.DISPLAY_HEIGHT, true);
 				EntityManager.getInstance().checkShipCollisions();
-//				m_gameWindow.repaint();
+				
+				// pack the game state and send it to all clients
 				MsgData stateMsg = packState(EntityManager.getState()); 
 				broadcast(stateMsg);
-				String diffTimes = "";
-				long currTime = System.currentTimeMillis();
-				for(Iterator<ClientConnection> itr = m_clients.iterator(); itr.hasNext(); )
-				{
-					diffTimes = diffTimes + String.format("%04d ", new Integer((int)(currTime - itr.next().m_lastUpdate))); 
-				}
-//				System.out.println(diffTimes);
-//				System.out.println(System.currentTimeMillis());
 				try
 				{
+					// sleep awhile to avoid taxing the processor as much.
+					// this is a bit shorter than the time needed for a new frame in order to allow for some 
+					// message processing before calculating the next frame 
 					sleep(Const.FRAME_WAIT);
 				} catch(InterruptedException e)
 				{
@@ -140,6 +117,7 @@ public class World extends Thread
 		}
 	}
 
+	// returns null if not found
 	private ClientConnection findClient(MsgData msg)
 	{
 		ClientConnection c;
@@ -184,7 +162,7 @@ public class World extends Thread
 	
 	private void initBall()
 	{
-		// Ball
+		// create Ball
 		EntityManager.getInstance().addBall(new Vector2D(Const.BALL_X, Const.BALL_Y), new Vector2D(0.0, 0.0));	
 	}
 	
@@ -210,7 +188,6 @@ public class World extends Thread
 		{
 			msg.setParameter("entity"+i, msgs.get(i).getJSONObj());
 		}
-//		System.out.println(msg.toString());
 		return msg;
 	}
 	
@@ -235,6 +212,12 @@ public class World extends Thread
 		// Get player count, create a new ID and create a reply message
 		int tp = EntityManager.getTotalPlayers();
 		MsgData msg = new MsgData();
+
+		Vector2D position;
+		Vector2D speed = new Vector2D(0.0, 0.0);
+		Vector2D direction = new Vector2D(1.0, 0.0);
+		int color;
+		int ID = tp + 1;
 		
 		// Players join teams in an alternating manner
 		if (tp % 2 == 1)
@@ -242,89 +225,32 @@ public class World extends Thread
 			// Create a ship for Team 1
 			double xPos = Const.START_TEAM1_SHIP1_X;
 			double yPos = Const.START_TEAM1_SHIP1_Y + (tp * 25);
-			Vector2D position = new Vector2D(xPos, yPos);
-			Vector2D speed = new Vector2D(0.0, 0.0);
-			Vector2D direction = new Vector2D(1.0, 0.0);
-			int color = 0;		// color 0 for team 1
-			int ID = tp + 1;
-			
-			EntityManager.getInstance().addShip(position, speed, direction, color, ID);
-
-			// Build message
-			msg.setParameter("position", position);
-			msg.setParameter("speed", speed);
-			msg.setParameter("direction", direction);
-			msg.setParameter("color", color);
-			msg.setParameter("newID", ID);
+			position = new Vector2D(xPos, yPos);
+			color = 0;		// color 0 for team 1
 		}
 		else
 		{
 			// Create a ship for Team 2
 			double xPos = Const.START_TEAM2_SHIP2_X;
 			double yPos = Const.START_TEAM2_SHIP2_Y - (tp * 25);
-			Vector2D position = new Vector2D(xPos, yPos);
-			Vector2D speed = new Vector2D(0.0, 0.0);
-			Vector2D direction = new Vector2D(-1.0, 0.0);
-			int color = 1;		// color 1 for team 2
-			int ID = tp + 1;
-			
-			EntityManager.getInstance().addShip(position, speed, direction, color, ID);
-			
-			// Build message
-			msg.setParameter("position", position);
-			msg.setParameter("speed", speed);
-			msg.setParameter("direction", direction);
-			msg.setParameter("color", color);
-			msg.setParameter("newID", ID);
-			
-		}		
+			position = new Vector2D(xPos, yPos);
+			color = 1;		// color 1 for team 2
+		}
+		
+		EntityManager.getInstance().addShip(position, speed, direction, color, ID);
+
+		// Build message about the new player
+		msg.setParameter("position", position);
+		msg.setParameter("speed", speed);
+		msg.setParameter("direction", direction);
+		msg.setParameter("color", color);
+		msg.setParameter("newID", ID);
 		
 		return msg;
-		
-		
-//		switch(EntityManager.getTotalPlayers())
-//		{
-//		case 0:
-//			// Team 1, Ship 1
-//			EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP1_X, Const.START_TEAM1_SHIP1_Y), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), Const.TEAM1_COLOR, Const.SHIP1_ID);
-//			return 1;
-//		
-//		case 1:
-//			// Team 1, Ship 2
-//			EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP2_X, Const.START_TEAM1_SHIP2_Y), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), Const.TEAM1_COLOR, Const.SHIP2_ID);
-//			return 2;
-//			
-//		case 2:
-//			// Team 2, Ship 3
-//			EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP1_X, Const.START_TEAM2_SHIP1_Y), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), Const.TEAM2_COLOR, Const.SHIP3_ID);
-//			return 3;
-//			
-//		case 3:
-//			// Team 2, Ship 4
-//			EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP2_X, Const.START_TEAM2_SHIP2_Y), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), Const.TEAM2_COLOR, Const.SHIP4_ID);
-//			return 4;
-//			
-//		case 4:
-//			// A fifth player tries to enter
-//			System.err.println("Error: server already full");
-//			return 0;
-//			
-//		default:
-//			System.err.println("Error: illegal player count: " + EntityManager.getTotalPlayers());
-//			System.exit(1);
-//		}
-//		return 0;
 	}
 
 	public double getActualFps()
 	{
-
 		return m_actualFps;
 	}
-
-	public void addKeyListener(KeyListener k)
-	{
-		// m_gameWindow.addKeyListener(k);
-	}
-
 }

@@ -15,11 +15,10 @@ import GBall.Shared.ScoreKeeper;
 import GBall.Shared.Ship;
 import GBall.Shared.Vector2D;
 
+// thread to enable sleep
 public class World extends Thread
 {
-
-//	public static String SERVERIP = "193.10.180.204"; // 'Within' the emulator!
-	public static String SERVERIP = "127.0.0.1";
+	public static String SERVERIP = "127.0.0.1"; // can be set from commandline
 	public static final int SERVERPORT = 25001;
 	public static InetAddress SERVERADDRESS;
 
@@ -38,10 +37,10 @@ public class World extends Thread
 	private DatagramSocket m_socket;
 	private Listener m_listener;
 
-	private final GameWindow m_gameWindow = new GameWindow("Client");
+	private final GameWindow m_gameWindow = new GameWindow("Geometry Ball Tournament 2015");
 	private InputListener m_inputListener;
 	
-	private Ship ship;
+	private Ship ship; // reference to the local player's ship
 
 	private World()
 	{
@@ -51,10 +50,8 @@ public class World extends Thread
 	public void process()
 	{
 		m_inputListener = new InputListener(new KeyConfig(KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_UP));
-//		initPlayers();
 		EntityManager.getInstance().addBall(new SurrogateBall(new Vector2D(Const.BALL_X, Const.BALL_Y), new Vector2D()));
 
-		// Marshal the state
 		try
 		{
 			m_socket = new DatagramSocket();
@@ -71,10 +68,11 @@ public class World extends Thread
 			msg = null;
 			// Receive new player data
 			while(msg == null)
-			{
+			{ // check and assignment split to different statements because Java
 				msg = m_listener.getMessage();
 			}
 			
+			// calculate difference between local time and server time
 			long timeDiff = msg.getTimestamp() - System.currentTimeMillis();
 			MsgData.m_offset = timeDiff;
 			System.out.println(msg.getTimestamp() + "\n"
@@ -88,52 +86,42 @@ public class World extends Thread
 			initEntities();
 			// Add the new player ship
 			EntityManager.getInstance().addShip(ship);
-			
-
 		} catch (IOException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-//		MsgData prevMsg = null;
-		MsgData msg;
+		
+		MsgData msg; // declaration here to avoid allocation/deallocation of variable each frame
 		while (true)
 		{
+			// check if it's time to calculate a new frame
 			if (newFrame())
 			{
+				// check if a new game state has arrived from the server
 				if((msg = m_listener.getMessage()) != null)
 				{
-//					System.out.println(msg.debugInfo());
 					updateState(msg);
 				}
-//				System.out.println(System.currentTimeMillis());
-				/*LinkedList<GameEntity> entities = EntityManager.getState();
-				GameEntity ge;
-				for(Iterator<GameEntity> itr = entities.iterator(); itr.hasNext();)
-				{
-					ge = itr.next();
-					sendMsg(ge.getMsgData());
-				}*/
-				/*ship.setRotation(m_inputListener.getRotation());
-				ship.setAcceleration(m_inputListener.getAcceleration());*/
+				// pack input and send to server
 				msg = new MsgData();
 				msg.setParameter("ID", ship.getID());
 				msg.setParameter("rotation", m_inputListener.getRotation());
 				msg.setParameter("acceleration", m_inputListener.getAcceleration());
-				//msg.m_prevMsg = prevMsg;
-//				System.out.println(EntityManager.getState().get(1).getPosition().toJSONString());
 				sendMsg(msg);
+				
+				// set acceleration and rotation for local ship surrogate for client side prediction
 				ship.setAcceleration(m_inputListener.getAcceleration());
 				ship.setRotation(m_inputListener.getRotation());
-				//msg.m_prevMsg = null;
-//				prevMsg = msg;
+				
+				// calculate movement and collisions
 				EntityManager.getInstance().updatePositions();
 				EntityManager.getInstance().checkBorderCollisions(Const.DISPLAY_WIDTH, Const.DISPLAY_HEIGHT, false);
 				EntityManager.getInstance().checkShipCollisions();
 				m_gameWindow.repaint();
-//				System.out.println(System.currentTimeMillis());
 				try
 				{
+					// sleep a bit to reduce unneccesary workload for processor
 					sleep(Const.FRAME_WAIT);
 				} catch(InterruptedException e)
 				{
@@ -143,6 +131,7 @@ public class World extends Thread
 		}
 	}
 	
+	// update all entities to match server state
 	private void updateState(MsgData msg)
 	{
 		int count = msg.getInt("EntityCount");
@@ -158,6 +147,7 @@ public class World extends Thread
 		{
 			EntityManager.getInstance().setState(i, new MsgData(msg.getJSONObj("entity" + i)));
 		}
+		// update score
 		ScoreKeeper.getInstance().setScore(msg.getVector("Score"));
 	}
 
@@ -197,18 +187,11 @@ public class World extends Thread
 		// Create players in arbitrary positions to be updated with messages
 		for(int i = 1; i < ship.getID(); i++)
 		{
-			if (i % 2 == 0)
-			{
-				EntityManager.getInstance().addShip(new SurrogateShip(new Vector2D(Const.START_TEAM1_SHIP1_X, Const.START_TEAM1_SHIP1_Y + (i * 50)), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), 0, i));
-			}
-			else
-			{
-				EntityManager.getInstance().addShip(new SurrogateShip(new Vector2D(Const.START_TEAM2_SHIP1_X, Const.START_TEAM2_SHIP1_Y + (i * 50)), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), 1, i));
-
-			}
+			initNewEntity(i);
 		}
 	}
 
+	// create a new entity and calculate position and color based on entity id
 	private void initNewEntity(int count)
 	{
 		if (count % 2 == 0)
@@ -221,27 +204,8 @@ public class World extends Thread
 		}
 	}
 
-//	private void initPlayers()
-//	{
-//		// The order in which the entities are added are important as the index corresponds to their ID:s
-//		
-//		// Ball
-//		EntityManager.getInstance().addBall(new Vector2D(Const.BALL_X, Const.BALL_Y), new Vector2D(0.0, 0.0));
-//		
-//		// Team 1
-//		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP1_X, Const.START_TEAM1_SHIP1_Y), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), Const.TEAM1_COLOR, Const.SHIP1_ID);
-//
-//		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM1_SHIP2_X, Const.START_TEAM1_SHIP2_Y), new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0), Const.TEAM1_COLOR, Const.SHIP2_ID);
-//
-//		// Team 2
-//		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP1_X, Const.START_TEAM2_SHIP1_Y), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), Const.TEAM2_COLOR, Const.SHIP3_ID);
-//
-//		EntityManager.getInstance().addShip(new Vector2D(Const.START_TEAM2_SHIP2_X, Const.START_TEAM2_SHIP2_Y), new Vector2D(0.0, 0.0), new Vector2D(-1.0, 0.0), Const.TEAM2_COLOR, Const.SHIP4_ID);
-//	}
-
 	public double getActualFps()
 	{
-
 		return m_actualFps;
 	}
 

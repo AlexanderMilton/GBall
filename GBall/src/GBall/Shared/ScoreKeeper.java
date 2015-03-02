@@ -31,6 +31,7 @@ public class ScoreKeeper
 	
 	public void setScore(Vector2D v)
 	{
+		// make sure the score isn't about to be set to negative
 		if(v.getX() < 0 || v.getY() < 0)
 		{
 			return;

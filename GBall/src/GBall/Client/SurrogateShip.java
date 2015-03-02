@@ -5,6 +5,7 @@ import GBall.Shared.MsgData;
 import GBall.Shared.Ship;
 import GBall.Shared.Vector2D;
 
+// this is used for client side prediction, and holds the position etc that is shown to the player
 public class SurrogateShip extends Ship
 {
 	// surrogate position, speed, direction etc.
@@ -45,7 +46,6 @@ public class SurrogateShip extends Ship
 	@Override
 	public void move()
 	{
-//		Vector2D prevPos = new Vector2D(m_surPosition);
 		if (m_surRotation != 0)
 		{
 			m_surDirection.rotate(m_surRotation * Const.SHIP_ROTATION);
@@ -66,27 +66,25 @@ public class SurrogateShip extends Ship
 		m_surLastUpdate = currTime;
 
 		checkRealState();
-
-//		prevPos.subtract(m_surPosition);
-		// System.out.println(prevPos + " " + m_surAcceleration + " " +
-		// m_surRotation + " : " + delta);
 	}
 
+	// checks the surrogates position against the ships real position that is updated from server.
 	private void checkRealState()
 	{
 		long stateAge = System.currentTimeMillis() - m_lastUpdateTime;
 		float f = 0.3f;
 		if (stateAge > 0)
 		{
+			// base the impact the "real" position etc. has on how old the data is
 			f = 10.0f / (float) stateAge;
-			// System.out.println(f + " " + stateDiff + " " + stateAge);
 		}
 
+		// differnce between surrogate position and "real" position
 		double deltaX = Math.abs(m_surPosition.getX() - super.getPosition().getX());
 		double deltaY = Math.abs(m_surPosition.getY() - super.getPosition().getY());
 
 		boolean changed = false;
-		// System.out.println(deltaX + " " + deltaY);
+		// if difference is too big or really small, just warp the ship.
 		if (deltaX > Const.SURROGATE_MAX_DIFFERENCE || deltaY > Const.SURROGATE_MAX_DIFFERENCE)
 		{
 			m_surPosition.set(super.getPosition());
@@ -112,30 +110,22 @@ public class SurrogateShip extends Ship
 			{
 				m_surDirection.lerp(super.getDirection(), f);
 			}
-//			System.out.println(m_surDirection.dotProduct(super.getDirection()));
 		}
 
-		/*
-		 * if(m_surDirection.dotProduct(super.getDirection()) < 0.5) {
-		 * m_surDirection.set(super.getDirection()); }
-		 */
+		// if not warped, interpolate towards the real position and base the amount on how old the position data is
 		if (!changed)
 		{
 			m_surPosition.lerp(super.getPosition(), f);
 			m_surSpeed.lerp(super.getSpeed(), f);
 		}
-
-		// System.out.println(m_surSpeed.dotProduct(super.getSpeed()) + "\n"
-		// + m_surSpeed + " " + super.getSpeed());
 	}
+	
+	// multiple overrides to affect the surrogate instead of the entity
 
 	@Override
 	public Vector2D getPosition()
 	{
-		// System.out.println(m_surPosition + " " + super.getPosition() + " : "
-		// + m_surAcceleration + " " + m_surRotation);
 		return m_surPosition;
-		// return super.getPosition();
 	}
 
 	@Override
@@ -171,24 +161,9 @@ public class SurrogateShip extends Ship
 		return m_surSpeed;
 	}
 
-//	@Override
-//	public void render(Graphics g)
-//	{
-//		super.render(g);
-//		g.setFont(Const.SCORE_FONT);
-//		g.setColor(Color.white);
-//		int diff = (int) (m_surLastUpdate - m_lastUpdateTime);
-//		g.drawString(new Integer(diff).toString(), 50, 50 + (m_ID * 25));
-//	}
-
 	@Override
 	public void setState(MsgData msg)
 	{
 		super.setState(msg);
-		checkRealState();
-		if (!m_surPosition.equals(super.getPosition()))
-		{
-//			System.out.println(m_surPosition + " " + m_surDirection + " " + m_surSpeed);
-		}
 	}
 }

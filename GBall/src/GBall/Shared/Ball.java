@@ -5,9 +5,6 @@ import java.awt.Graphics;
 
 public class Ball extends GameEntity
 {
-	/**
-	 * 
-	 */
 	private Color m_color;
 
 	public Ball(final Vector2D position, final Vector2D speed)

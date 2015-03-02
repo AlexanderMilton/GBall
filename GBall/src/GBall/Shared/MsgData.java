@@ -10,21 +10,22 @@ import org.json.simple.parser.ParseException;
 @SuppressWarnings("unchecked")
 public class MsgData implements Comparable<MsgData>
 {
-
-	/**
-	 * 
-	 */
 	private JSONObject obj = new JSONObject();
 
+	// used for debug purposes
 	public final InetAddress m_address;
 	public final int m_port;
 	
+	// used to translate between server time and local time.
 	public static long m_offset = 0;
+	
+	// stamps this message with the offset to set it as server time
 	private void stamp()
 	{
 		obj.put("timestamp", System.currentTimeMillis() + m_offset);
 	}
 	
+	// translates the message timestamp from server time to local time.
 	private void applyOffset()
 	{
 		obj.put("timestamp", getTimestamp() - m_offset);
@@ -54,11 +55,6 @@ public class MsgData implements Comparable<MsgData>
 		m_port = port;
 		applyOffset();
 //		stamp();
-	}
-	
-	public void setPrevMessage(JSONObject pObj)
-	{
-		obj.put("prevMsg", pObj);
 	}
 	
 	public void setParameter(String key, int value)
@@ -119,6 +115,7 @@ public class MsgData implements Comparable<MsgData>
 		return (long) obj.get("timestamp");
 	}
 	
+	//Makes instances of this class comparable which enables insertion in a priority queue	
 	@Override
 	public int compareTo(MsgData o)
 	{
