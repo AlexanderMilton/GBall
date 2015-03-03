@@ -215,7 +215,7 @@ public class World extends Thread
 
 		Vector2D position;
 		Vector2D speed = new Vector2D(0.0, 0.0);
-		Vector2D direction = new Vector2D(1.0, 0.0);
+		Vector2D direction;
 		int color;
 		int ID = tp + 1;
 		
@@ -226,6 +226,7 @@ public class World extends Thread
 			double xPos = Const.START_TEAM1_SHIP1_X;
 			double yPos = Const.START_TEAM1_SHIP1_Y + (tp * 25);
 			position = new Vector2D(xPos, yPos);
+			direction = new Vector2D(1.0, 0.0);
 			color = 0;		// color 0 for team 1
 		}
 		else
@@ -234,6 +235,7 @@ public class World extends Thread
 			double xPos = Const.START_TEAM2_SHIP2_X;
 			double yPos = Const.START_TEAM2_SHIP2_Y - (tp * 25);
 			position = new Vector2D(xPos, yPos);
+			direction = new Vector2D(-1.0, 0.0);
 			color = 1;		// color 1 for team 2
 		}
 		
